@@ -1,0 +1,5 @@
+vendor/
+*.exe
+*.xlsx
+*.pdf
+composer.phar

@@ -1,0 +1,106 @@
+/* === 1. Đặt cấu hình mặc định chung cho toàn bộ trang === */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+}
+
+/* === 2. Tiêu đề chính === */
+h1, h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+/* === 3. Bảng dữ liệu === */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: #fff;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 12px;
+  text-align: center;
+}
+
+th {
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* === 4. Form nhập liệu === */
+form {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+input[type="text"], input[type="email"], input[type="date"], select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 200px;
+}
+
+button, input[type="submit"] {
+  padding: 8px 16px;
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover, input[type="submit"]:hover {
+  background-color: #27ae60;
+}
+
+/* === 5. Link chức năng === */
+a {
+  color: #2980b9;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #1f618d;
+}
+
+/* === 6. Nút hành động nhỏ === */
+button.small, a.button-small {
+  font-size: 14px;
+  padding: 4px 8px;
+  margin-left: 5px;
+  background-color: #f39c12;
+}
+
+button.small:hover, a.button-small:hover {
+  background-color: #d68910;
+  color: white;
+}
+
+/* === 7. Thông báo thành công/thất bại === */
+.alert-success {
+  color: green;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+.alert-error {
+  color: red;
+  padding: 8px;
+  margin-bottom: 10px;
+}

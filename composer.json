@@ -1,0 +1,26 @@
+{
+  "name": "thpthamthuannam/dang-ky-nv-lop10",
+  "description": "Hệ thống đăng ký nguyện vọng lớp 10 – THPT Hàm Thuận Nam",
+  "type": "project",
+  "require": {
+    "php": ">=7.4",
+    "phpoffice/phpspreadsheet": "^4.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    },
+    "files": [
+      "autoload.php"
+    ]
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "platform-check": false
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "@php -r \"file_exists('vendor/autoload.php') || exit(1);\""
+    ]
+  }
+}
