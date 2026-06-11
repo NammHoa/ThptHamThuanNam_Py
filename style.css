@@ -1,26 +1,25 @@
-/* === 1. Đặt cấu hình mặc định chung cho toàn bộ trang === */
+* { box-sizing: border-box; }
+
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f9f9f9;
-  color: #333;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f0f4f8;
   margin: 0;
-  padding: 20px;
+  padding: 0;
+  color: #333;
 }
 
-/* === 2. Tiêu đề chính === */
 h1, h2 {
   text-align: center;
   color: #2c3e50;
   margin-bottom: 20px;
 }
 
-/* === 3. Bảng dữ liệu === */
 table {
   border-collapse: collapse;
   width: 100%;
   background-color: #fff;
   margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 th, td {
@@ -35,72 +34,212 @@ th {
   font-weight: bold;
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
+tr:nth-child(even) { background-color: #f2f2f2; }
 
-/* === 4. Form nhập liệu === */
-form {
-  margin-bottom: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-}
+a { color: #2980b9; text-decoration: none; }
+a:hover { text-decoration: underline; color: #1f618d; }
 
-input[type="text"], input[type="email"], input[type="date"], select {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 200px;
-}
 
-button, input[type="submit"] {
-  padding: 8px 16px;
-  background-color: #2ecc71;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover, input[type="submit"]:hover {
-  background-color: #27ae60;
-}
-
-/* === 5. Link chức năng === */
-a {
-  color: #2980b9;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-  color: #1f618d;
-}
-
-/* === 6. Nút hành động nhỏ === */
 button.small, a.button-small {
   font-size: 14px;
   padding: 4px 8px;
   margin-left: 5px;
   background-color: #f39c12;
-}
-
-button.small:hover, a.button-small:hover {
-  background-color: #d68910;
   color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button.small:hover, a.button-small:hover { background-color: #d68910; }
+
+
+.alert-success { color: green; padding: 8px; margin-bottom: 10px; }
+.alert-error   { color: red;   padding: 8px; margin-bottom: 10px; }
+
+
+header {
+  background: linear-gradient(135deg, #003366 0%, #004080 60%, #0066cc 100%);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
-/* === 7. Thông báo thành công/thất bại === */
-.alert-success {
-  color: green;
-  padding: 8px;
-  margin-bottom: 10px;
+.admin-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 15px;
+  background: rgba(0,0,0,0.15);
+}
+.admin-bar a {
+  margin-left: 8px;
+  color: #fff;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 5px 14px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+.admin-bar a:hover { background: rgba(255,255,255,0.35); }
+
+.header-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 15px 20px 20px 20px;
 }
 
-.alert-error {
-  color: red;
-  padding: 8px;
+.header-inner img {
+  height: 90px;
+  width: 90px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.6);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  background: #fff;
+  padding: 3px;
+}
+
+.header-inner h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 23px;
+  line-height: 1.7;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  letter-spacing: 0.5px;
+}
+
+main { padding: 20px; }
+
+.alert {
+  background: #d4edda;
+  color: #155724;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin: 20px auto;
+  max-width: 600px;
+  border-left: 4px solid #28a745;
+}
+
+.qr img { width: 150px; height: 150px; margin-top: 10px; }
+
+.form-container {
+  background: #fff;
+  padding: 35px;
+  max-width: 600px;
+  margin: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.form-container h2 {
+  text-align: center;
+  color: #004080;
   margin-bottom: 10px;
+  font-size: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #444;
+  font-size: 14px;
+}
+
+input[type="text"],
+input[type="email"],
+select {
+  width: 100%;
+  padding: 10px 14px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: border 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+select:focus {
+  border-color: #004080;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0,64,128,0.1);
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: linear-gradient(135deg, #28a745, #20c050);
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(40,167,69,0.3);
+  transition: background 0.2s, transform 0.1s;
+}
+button[type="submit"]:hover {
+  background: linear-gradient(135deg, #218838, #1aab42);
+  transform: translateY(-1px);
+}
+
+.note { font-size: 13px; color: #888; margin-top: 12px; text-align: center; }
+
+footer {
+  text-align: center;
+  padding: 18px;
+  background: #e0e8f0;
+  color: #555;
+  font-size: 14px;
+  margin-top: 30px;
+  border-top: 1px solid #ccd6e0;
+}
+footer a { color: #004080; }
+footer a:hover { text-decoration: underline; }
+
+
+@media (max-width: 768px) {
+  .header-inner h1 { font-size: 20px; }
+  .header-inner img { height: 80px; width: 80px; }
+}
+
+@media (max-width: 600px) {
+  .header-inner {
+    flex-direction: column;
+    padding: 12px 15px 18px;
+    gap: 10px;
+    text-align: center;
+  }
+  .header-inner img { height: 75px; width: 75px; }
+  .header-inner h1 { font-size: 17px; line-height: 1.6; letter-spacing: 0; }
+  .admin-bar a { font-size: 12px; padding: 4px 12px; }
+  .form-container { padding: 25px 20px; }
+  main { padding: 15px; }
+}
+
+@media (max-width: 480px) {
+  .header-inner img { height: 68px; width: 68px; }
+  .header-inner h1 { font-size: 15px; line-height: 1.55; }
+  .form-container { padding: 20px 15px; }
+  .form-container h2 { font-size: 17px; }
+  input[type="text"], input[type="email"], select { font-size: 14px; padding: 9px 12px; }
+  button[type="submit"] { font-size: 15px; }
+}
+
+@media (max-width: 380px) {
+  .admin-bar a { font-size: 11px; padding: 4px 9px; }
+  .header-inner img { height: 60px; width: 60px; }
+  .header-inner h1 { font-size: 13px; line-height: 1.5; }
+  .form-container { padding: 15px 12px; }
+  label { font-size: 13px; }
 }

@@ -5,8 +5,8 @@ require __DIR__ . '/autoload.php';
 // ——————— CẤU HÌNH CHUNG ———————
 $ten_truong = "Trường THPT Hàm Thuận Nam";
 $nam_hoc    = "2025–2026";
-$logo_path  = "logo-thpt.png";
-$favicon_path = "favicon.png";
+$logo_path  = "images/logo-thpt-cent.jpg";
+$favicon_path = "images/favicon.png";
 // ——————————————————————————
 
 $now = new DateTime();  // Thời điểm hiện tại
@@ -43,41 +43,28 @@ while ($r = $res->fetch_assoc()) {
   <meta charset="UTF-8">
   <title>Đăng ký nguyện vọng lớp 10 – <?= $ten_truong ?></title>
   <link rel="icon" href="<?= $favicon_path ?>">
-  <style>
-    body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 0; }
-    header, footer { text-align: center; background: #004080; color: #fff; }
-    header { padding: 20px; position: relative; }
-    footer { padding: 15px; background: #e0e0e0; color: #000; }
-    main { padding: 20px; }
-
-    .admin-login { position: absolute; top: 20px; right: 20px; }
-    .admin-login a { margin-left: 10px; color: #fff; background: #007BFF; padding: 6px 12px; border-radius: 4px; text-decoration: none; }
-    .admin-login a:hover { background: #0056b3; }
-
-    .alert { background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin: 20px auto; max-width: 600px; }
-    .qr img { width: 150px; height: 150px; margin-top: 10px; }
-    .form-container { background: #fff; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    label { display: block; margin-top: 15px; font-weight: bold; }
-    input, select, button { width: 100%; padding: 10px; margin-top: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-    button { background: #28a745; color: #fff; font-size: 16px; cursor: pointer; }
-    button:hover { background: #218838; }
-    .note { font-size: 14px; color: #555; margin-top: 10px; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-		  <header>
-			<div class="admin-login">
-			  <?php if (!empty($_SESSION['is_admin'])): ?>
-				<a href="admin/dashboard.php">Dashboard</a>
-				<a href="admin/logout.php">Logout</a>
-			  <?php else: ?>
-				<a href="admin/login.php">Admin Login</a>
-			  <?php endif; ?>
-			</div>
-			<img src="<?= $logo_path ?>" alt="Logo" style="height:70px; margin-bottom:10px;">
-			<h1>ĐĂNG KÝ NGUYỆN VỌNG TUYỂN SINH LỚP 10<br><?= strtoupper($ten_truong) ?><br> NĂM HỌC: 2025 - 2026</h1>
-		  </header>
+	<header>
+  <div class="admin-bar">
+    <?php if (!empty($_SESSION['is_admin'])): ?>
+      <a href="admin/dashboard.php">Dashboard</a>
+      <a href="admin/logout.php">Logout</a>
+    <?php else: ?>
+      <a href="admin/login.php">Admin Login</a>
+    <?php endif; ?>
+  </div>
+  <div class="header-inner">
+    <img src="<?= $logo_path ?>" alt="Logo trường THPT Hàm Thuận Nam">
+    <h1>
+      ĐĂNG KÝ NGUYỆN VỌNG TUYỂN SINH LỚP 10<br>
+      TRƯỜNG THPT HÀM THUẬN NAM<br>
+      NĂM HỌC: 2025 - 2026
+    </h1>
+  </div>
+  </header>
 
   <main>
     <!-- THÔNG BÁO THÀNH CÔNG -->
