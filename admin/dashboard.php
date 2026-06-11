@@ -47,6 +47,7 @@ $result = $conn->query($sql);
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background: #e0e0e0; }
   </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="admin_style.css">
 </head>
 <body>
@@ -54,11 +55,11 @@ $result = $conn->query($sql);
   <!-- HEADER: Tiêu đề và Menu Admin -->
   <header>
     <h1>Admin Dashboard</h1>
-    <a href="import_trungtuyen.php" class="button">Upload dữ liệu trúng tuyển Excel</a>
-    <a href="download.php" class="button">Download danh sách đăng kí </a>
-	<a href="deadline.php" class="button"> ⚙️ Cài đặt hạn đăng ký	</a>
+    <a href="import_trungtuyen.php" class="button">Tải lên dữ liệu trúng tuyển Excel</a>
+    <a href="download.php" class="button">Tải danh sách đăng kí </a>
+	<a href="deadline.php" class="button"> Cài đặt hạn đăng ký	</a>
 	<a href="tohop.php" class="button"> Cập nhật tổ hợp	</a>
-    <a href="logout.php" class="button">Logout</a>
+    <a href="logout.php" class="button">Đăng xuất</a>
   </header>
 
   <!-- MAIN: Bảng danh sách đăng ký -->

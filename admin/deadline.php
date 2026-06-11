@@ -45,6 +45,7 @@ if ($row = $result->fetch_assoc()) {
     header a { color: #fff; margin: 0 10px; text-decoration: none; }
 	main { text-align:center; margin: 10px}
   </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="admin_style.css">
 
 </head>
