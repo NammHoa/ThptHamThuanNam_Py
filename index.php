@@ -27,8 +27,7 @@ if ($row = $res->fetch_assoc()) {
 
 // Lấy session thông báo thành công & SBD để sinh QR
 $success = $_SESSION['success'] ?? null;
-$sbd_qr  = $_SESSION['sbd']     ?? null;
-unset($_SESSION['success'], $_SESSION['sbd']);
+unset($_SESSION['success']);
 
 // Lấy danh sách tổ hợp do Admin cấu hình (bảng to_hop)
 $to_hops = [];
@@ -68,17 +67,17 @@ while ($r = $res->fetch_assoc()) {
 
   <main>
     <!-- THÔNG BÁO THÀNH CÔNG -->
-    <?php if ($success): ?>
-      <div class="alert"><?= htmlspecialchars($success) ?></div>
-      <?php if ($sbd_qr): 
-        $qr_data = "SBD:$sbd_qr;TR:$ten_truong"; ?>
-        <div class="qr" style="text-align:center;">
-          <img src="https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=<?= urlencode($qr_data); ?>" alt="QR Code">
-          <p>Quét để xác nhận SBD</p>
-        </div>
-      <?php endif; ?>
-    <?php endif; ?>
+  <?php if ($success): ?>
+    <div class="alert alert-success"><?= $success ?></div>
+  <?php endif; ?>
 
+  <?php 
+    $error = $_SESSION['error'] ?? null;
+    unset($_SESSION['error']);
+  if ($error): ?>
+    <div class="alert alert-error"><?= $error ?></div>
+  <?php endif; ?>
+    
     <!-- HIỂN THỊ ĐẾM NGƯỢC HOẶC THÔNG BÁO HẾT HẠN -->
     <?php if (!$deadline): ?>
       <div class="alert" style="background: #f8d7da; color: #721c24;">
