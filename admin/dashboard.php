@@ -47,6 +47,7 @@ $result = $conn->query($sql);
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background: #e0e0e0; }
   </style>
+  <link rel="stylesheet" href="admin_style.css">
 </head>
 <body>
 

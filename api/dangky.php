@@ -17,16 +17,16 @@ use PHPMailer\PHPMailer\Exception;
 // 1. Kiểm tra deadline từ DB
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 if ($conn->connect_error) {
-    http_response_code(500);
-    die("❌ Lỗi kết nối CSDL: " . $conn->connect_error);
+    $_SESSION['error'] = "❌ Lỗi kết nối cơ sở dữ liệu.";
+    header("Location: ../index.php"); exit;
 }
 $conn->set_charset('utf8mb4');
 
 $res = $conn->query("SELECT gia_tri FROM thietlap WHERE ten='han_dang_ky' LIMIT 1");
 if ($row = $res->fetch_assoc()) {
     if (new DateTime() > new DateTime($row['gia_tri'])) {
-        http_response_code(403);
-        die("❌ Đã hết hạn đăng ký.");
+        $_SESSION['error'] = "❌ Đã hết hạn đăng ký nguyện vọng.";
+        header("Location: ../index.php"); exit;
     }
 }
 
@@ -42,14 +42,14 @@ $ho_ten        = html_entity_decode($ho_ten, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
 // 3. Kiểm tra bắt buộc
 if (!$ho_ten || !$lop || !$so_bao_danh || !$so_dien_thoai || !$nv1 || !$nv2) {
-    http_response_code(400);
-    die("❌ Vui lòng nhập đầy đủ thông tin.");
+    $_SESSION['error'] = "❌ Vui lòng nhập đầy đủ thông tin.";
+    header("Location: ../index.php"); exit;
 }
 
 // 4. NV1 khác NV2
 if ($nv1 === $nv2) {
-    http_response_code(400);
-    die("❌ Nguyện vọng 1 và 2 không được trùng nhau.");
+    $_SESSION['error'] = "❌ Nguyện vọng 1 và 2 không được trùng nhau.";
+    header("Location: ../index.php"); exit;
 }
 
 // 5. Kiểm tra NV hợp lệ
@@ -60,8 +60,8 @@ $stmt->bind_result($cnt);
 $stmt->fetch();
 $stmt->close();
 if ($cnt < 2) {
-    http_response_code(400);
-    die("❌ Nguyện vọng không hợp lệ.");
+    $_SESSION['error'] = "❌ Nguyện vọng không hợp lệ.";
+    header("Location: ../index.php"); exit;
 }
 
 // 6. Kiểm tra SBD đã đăng ký chưa
@@ -86,8 +86,8 @@ $stmt->bind_param("ss", $so_bao_danh, $ho_ten);
 $stmt->execute();
 $stmt->store_result();
 if ($stmt->num_rows === 0) {
-    http_response_code(403);
-    die("❌ Thông tin SBD/Họ tên không khớp danh sách trúng tuyển.");
+    $_SESSION['error'] = "❌ Thông tin SBD/Họ tên không khớp danh sách trúng tuyển.";
+    header("Location: ../index.php"); exit;
 }
 $stmt->close();
 
@@ -106,8 +106,8 @@ $stmt = $conn->prepare(
 );
 $stmt->bind_param("sssssss", $ho_ten, $lop, $so_bao_danh, $so_dien_thoai, $email, $label1, $label2);
 if (!$stmt->execute()) {
-    http_response_code(500);
-    die("❌ Lỗi khi lưu dữ liệu: " . $stmt->error);
+    $_SESSION['error'] = "❌ Lỗi khi lưu dữ liệu: " . $stmt->error;
+    header("Location: ../index.php"); exit;
 }
 
 // 10. Gửi email xác nhận bằng PHPMailer

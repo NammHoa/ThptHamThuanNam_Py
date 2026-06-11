@@ -4,6 +4,7 @@ session_start();
 
 // 1. Xoá tất cả dữ liệu session
 $_SESSION = [];
+<link rel="stylesheet" href="admin_style.css">
 
 // 2. Nếu muốn xoá hoàn toàn session cookie trên client
 if (ini_get("session.use_cookies")) {

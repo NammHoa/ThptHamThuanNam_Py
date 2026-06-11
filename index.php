@@ -42,7 +42,7 @@ while ($r = $res->fetch_assoc()) {
   <meta charset="UTF-8">
   <title>Đăng ký nguyện vọng lớp 10 – <?= $ten_truong ?></title>
   <link rel="icon" href="<?= $favicon_path ?>">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 

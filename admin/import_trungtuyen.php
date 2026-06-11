@@ -78,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file_excel'])) {
     button:hover { background: #218838; }
     .result { white-space: pre-wrap; font-family: monospace; background: #e9f7ef; padding: 15px; border-radius: 4px; margin-top: 20px; }
   </style>
+  <link rel="stylesheet" href="admin_style.css">
 </head>
 <body>
 

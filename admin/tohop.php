@@ -1,7 +1,6 @@
 <?php
 session_start();
 require '../config.php';
-
 // Bảo vệ trang: chỉ Admin được truy cập
 if (empty($_SESSION['is_admin'])) {
     header('Location: login.php');
@@ -48,7 +47,7 @@ $result = $conn->query("SELECT * FROM to_hop ORDER BY id ASC");
 <head>
     <meta charset="UTF-8">
     <title>Quản lý tổ hợp môn</title>
-    <link rel="stylesheet" href="../style.css"> <!-- Hoặc ../style.css nếu nằm trong admin/ -->
+    <link rel="stylesheet" href="admin_style.css">
 </head>
 <body>
     <h2>QUẢN LÝ TỔ HỢP MÔN</h2>

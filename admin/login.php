@@ -1,6 +1,7 @@
 <?php
 session_start();
 require '../config.php';    // Kết nối DB qua hằng số DB_*
+<link rel="stylesheet" href="admin_style.css">
 
 // Nếu đã login, chuyển thẳng tới dashboard
 if (!empty($_SESSION['is_admin'])) {
@@ -67,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     button:hover { background: #218838; }
     .error { color: red; font-size: 14px; margin-top: 10px; }
   </style>
+  <link rel="stylesheet" href="admin_style.css">
 </head>
 <body>
   <div class="box">

@@ -45,6 +45,8 @@ if ($row = $result->fetch_assoc()) {
     header a { color: #fff; margin: 0 10px; text-decoration: none; }
 	main { text-align:center; margin: 10px}
   </style>
+  <link rel="stylesheet" href="admin_style.css">
+
 </head>
 <body>
 	<header>
