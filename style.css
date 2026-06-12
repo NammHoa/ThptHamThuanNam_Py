@@ -35,6 +35,7 @@ button.small, a.button-small {
 }
 button.small:hover, a.button-small:hover { background-color: #d68910; }
 
+/* ===== HEADER ===== */
 header {
   background: linear-gradient(135deg, #003366 0%, #004080 60%, #0066cc 100%);
   color: #fff;
@@ -81,7 +82,7 @@ header {
 /* ===== MAIN ===== */
 main { padding: 20px; }
 
-/* ===== THÔNG BÁO SESSION ===== */
+/* ===== THÔNG BÁO ===== */
 .alert {
   padding: 15px 20px;
   border-radius: 8px;
@@ -93,7 +94,6 @@ main { padding: 20px; }
   color: #155724;
   border-left: 4px solid #28a745;
 }
-
 .alert-error {
   color: #721c24;
   font-size: 14px;
@@ -115,6 +115,56 @@ main { padding: 20px; }
   margin: 20px auto;
 }
 
+/* ===== COUNTDOWN ===== */
+#countdown {
+  text-align: center;
+  margin: 20px auto 25px;
+  max-width: 600px;
+}
+.countdown-label {
+  font-size: 13px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.countdown-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px 28px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.cd-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 52px;
+}
+.cd-number {
+  font-size: 32px;
+  font-weight: 500;
+  color: #003366;
+  line-height: 1;
+}
+.cd-label {
+  font-size: 11px;
+  color: #888;
+  margin-top: 4px;
+}
+.cd-sep {
+  font-size: 24px;
+  font-weight: 500;
+  color: #ccc;
+  margin-bottom: 14px;
+}
+.form-container {
+  margin: 0 auto;  /* thêm dòng này nếu chưa có */
+}
+/* ===== FORM ===== */
 .form-container {
   background: #fff; padding: 35px;
   max-width: 600px; margin: auto;
@@ -125,7 +175,6 @@ main { padding: 20px; }
   text-align: center; color: #004080;
   margin-bottom: 10px; font-size: 20px;
 }
-
 .form-alert-error {
   color: #721c24;
   font-size: 14px;
@@ -145,7 +194,6 @@ main { padding: 20px; }
   opacity: 1;
   margin-bottom: 15px;
 }
-
 label {
   display: block; margin-top: 15px;
   font-weight: bold; color: #444; font-size: 14px;
@@ -175,6 +223,7 @@ button[type="submit"]:hover {
 }
 .note { font-size: 13px; color: #888; margin-top: 12px; text-align: center; }
 
+/* ===== FOOTER ===== */
 footer {
   background: linear-gradient(180deg, #002855 0%, #003875 100%);
   color: #fff;
@@ -227,14 +276,18 @@ footer {
 }
 .footer-bottom strong { color: #99ccff; }
 
+/* ===== RESPONSIVE TABLET ===== */
 @media (max-width: 768px) {
   .header-inner h1 { font-size: 20px; }
   .header-inner img { height: 80px; width: 80px; }
   .footer-main { padding: 20px 25px; gap: 20px; }
   .footer-info { padding-left: 20px; }
   .footer-info p { font-size: 12px; }
+  .countdown-timer { padding: 12px 18px; gap: 6px; }
+  .cd-number { font-size: 24px; }
 }
 
+/* ===== RESPONSIVE MOBILE ===== */
 @media (max-width: 600px) {
   .header-inner {
     flex-direction: column;
@@ -263,8 +316,13 @@ footer {
     padding-left: 0; padding-top: 15px; width: 100%;
   }
   .footer-info p { font-size: 12px; }
+  .countdown-timer { padding: 10px 14px; gap: 5px; }
+  .cd-number { font-size: 20px; }
+  .cd-block { min-width: 35px; }
+  .cd-sep { font-size: 18px; }
 }
 
+/* ===== RESPONSIVE MOBILE NHỎ ===== */
 @media (max-width: 480px) {
   .header-inner img { height: 68px; width: 68px; }
   .header-inner h1 { font-size: 15px; line-height: 1.55; }

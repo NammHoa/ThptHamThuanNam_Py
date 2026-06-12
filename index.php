@@ -42,7 +42,7 @@ while ($r = $res->fetch_assoc()) {
   <meta charset="UTF-8">
   <title>Đăng ký nguyện vọng lớp 10 – <?= $ten_truong ?></title>
   <link rel="icon" href="<?= $favicon_path ?>">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 
@@ -87,8 +87,9 @@ while ($r = $res->fetch_assoc()) {
         🔒 Đăng ký đã kết thúc lúc <?= $deadline->format('d/m/Y H:i'); ?>.
       </div>
     <?php else: ?>
-      <div id="countdown" style="text-align:center; font-size: 20px; color: red; margin-bottom: 20px;">
-        Thời gian còn lại để đăng ký: <span id="time-remaining"></span>
+      <div id="countdown">
+        <div class="countdown-label">Thời gian còn lại để đăng ký</div>
+        <div class="countdown-timer"></div>
       </div>
 
       <!-- FORM ĐĂNG KÝ -->
@@ -157,14 +158,14 @@ while ($r = $res->fetch_assoc()) {
   <?php if ($deadline && $now < $deadline): ?>
     <script>
       const deadline = new Date("<?= $deadline->format('Y-m-d\TH:i:s') ?>").getTime();
-      const countdown = document.getElementById("time-remaining");
+      const countdown = document.querySelector(".countdown-timer");
       const x = setInterval(function () {
           const now = new Date().getTime();
           const distance = deadline - now;
 
           if (distance <= 0) {
               clearInterval(x);
-              countdown.innerHTML = "ĐÃ HẾT HẠN";
+              countdown.innerHTML = "<span style='color:#dc3545; font-size:18px;'>⏰ ĐÃ HẾT HẠN ĐĂNG KÝ</span>";
               const formContainer = document.getElementById("form-dangky");
               if (formContainer) formContainer.style.display = "none";
           } else {
@@ -172,7 +173,15 @@ while ($r = $res->fetch_assoc()) {
               const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
               const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
               const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-              countdown.innerHTML = `${days} ngày ${hours} giờ ${minutes} phút ${seconds} giây`;
+              countdown.innerHTML = `
+  <div class="cd-block"><span class="cd-number">${String(days).padStart(2,'0')}</span><span class="cd-label">Ngày</span></div>
+  <span class="cd-sep">:</span>
+  <div class="cd-block"><span class="cd-number">${String(hours).padStart(2,'0')}</span><span class="cd-label">Giờ</span></div>
+  <span class="cd-sep">:</span>
+  <div class="cd-block"><span class="cd-number">${String(minutes).padStart(2,'0')}</span><span class="cd-label">Phút</span></div>
+  <span class="cd-sep">:</span>
+  <div class="cd-block"><span class="cd-number">${String(seconds).padStart(2,'0')}</span><span class="cd-label">Giây</span></div>
+`;
           }
       }, 1000);
     </script>
