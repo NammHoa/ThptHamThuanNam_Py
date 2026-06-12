@@ -78,8 +78,10 @@ header {
   letter-spacing: 0.5px;
 }
 
+/* ===== MAIN ===== */
 main { padding: 20px; }
 
+/* ===== THÔNG BÁO SESSION ===== */
 .alert {
   padding: 15px 20px;
   border-radius: 8px;
@@ -91,12 +93,29 @@ main { padding: 20px; }
   color: #155724;
   border-left: 4px solid #28a745;
 }
+
 .alert-error {
-  background: #f8d7da;
   color: #721c24;
+  font-size: 14px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease, margin 0.4s ease;
+  margin: 0 auto;
+  padding: 0 20px;
+  max-width: 600px;
+  border-radius: 8px;
+}
+.alert-error.show {
+  background: #f8d7da;
   border-left: 4px solid #dc3545;
+  padding: 15px 20px;
+  max-height: 80px;
+  opacity: 1;
+  margin: 20px auto;
 }
 
+/* ===== FORM ===== */
 .form-container {
   background: #fff; padding: 35px;
   max-width: 600px; margin: auto;
@@ -107,6 +126,27 @@ main { padding: 20px; }
   text-align: center; color: #004080;
   margin-bottom: 10px; font-size: 20px;
 }
+
+.form-alert-error {
+  color: #721c24;
+  font-size: 14px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease, margin 0.4s ease;
+  margin-bottom: 0;
+  padding: 0 15px;
+  border-radius: 8px;
+}
+.form-alert-error.show {
+  background: #f8d7da;
+  border-left: 4px solid #dc3545;
+  padding: 12px 15px;
+  max-height: 80px;
+  opacity: 1;
+  margin-bottom: 15px;
+}
+
 label {
   display: block; margin-top: 15px;
   font-weight: bold; color: #444; font-size: 14px;
@@ -137,17 +177,63 @@ button[type="submit"]:hover {
 .note { font-size: 13px; color: #888; margin-top: 12px; text-align: center; }
 
 footer {
-  text-align: center; padding: 18px;
-  background: #e0e8f0; color: #555;
-  font-size: 14px; margin-top: 30px;
-  border-top: 1px solid #ccd6e0;
+  background: linear-gradient(180deg, #002855 0%, #003875 100%);
+  color: #fff;
+  padding: 0;
+  margin-top: 40px;
 }
-footer a { color: #004080; }
-footer a:hover { text-decoration: underline; }
+.footer-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 30px 40px;
+  max-width: 1000px;
+  margin: auto;
+}
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 8px;
+  min-width: 130px;
+}
+.footer-brand img {
+  height: 80px; width: 80px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.5);
+  background: #fff; padding: 3px;
+  object-fit: contain;
+}
+.footer-brand h3 {
+  margin: 0; font-size: 12px; color: #fff;
+  line-height: 1.4; text-align: center; font-weight: bold;
+}
+.footer-info {
+  flex: none;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  padding-left: 30px;
+}
+.footer-info p {
+  margin: 6px 0; font-size: 13px;
+  color: rgba(255,255,255,0.85); line-height: 1.7;
+}
+.footer-info a { color: #99ccff; text-decoration: none; }
+.footer-info a:hover { text-decoration: underline; color: #fff; }
+.footer-bottom {
+  text-align: center; padding: 10px; font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+.footer-bottom strong { color: #99ccff; }
 
 @media (max-width: 768px) {
   .header-inner h1 { font-size: 20px; }
   .header-inner img { height: 80px; width: 80px; }
+  .footer-main { padding: 20px 25px; gap: 20px; }
+  .footer-info { padding-left: 20px; }
+  .footer-info p { font-size: 12px; }
 }
 
 @media (max-width: 600px) {
@@ -162,6 +248,22 @@ footer a:hover { text-decoration: underline; }
   .alert { max-width: 100%; margin: 15px 10px; }
   .form-container { padding: 25px 20px; }
   main { padding: 15px; }
+  .footer-main {
+    flex-direction: column;
+    padding: 20px 15px;
+    gap: 15px; text-align: center;
+  }
+  .footer-brand {
+    flex-direction: row; text-align: left;
+    gap: 12px; min-width: unset;
+  }
+  .footer-brand h3 { text-align: left; font-size: 13px; }
+  .footer-info {
+    border-left: none;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-left: 0; padding-top: 15px; width: 100%;
+  }
+  .footer-info p { font-size: 12px; }
 }
 
 @media (max-width: 480px) {

@@ -70,12 +70,11 @@ while ($r = $res->fetch_assoc()) {
   <?php if ($success): ?>
     <div class="alert alert-success"><?= $success ?></div>
   <?php endif; ?>
-
   <?php 
-    $error = $_SESSION['error'] ?? null;
-    unset($_SESSION['error']);
-  if ($error): ?>
-    <div class="alert alert-error"><?= $error ?></div>
+  $error = $_SESSION['error'] ?? null;
+  unset($_SESSION['error']);
+    if ($error): ?>
+      <div class="alert alert-error show"><?= $error ?></div>
   <?php endif; ?>
     
     <!-- HIỂN THỊ ĐẾM NGƯỢC HOẶC THÔNG BÁO HẾT HẠN -->
@@ -93,51 +92,66 @@ while ($r = $res->fetch_assoc()) {
       </div>
 
       <!-- FORM ĐĂNG KÝ -->
-      <div class="form-container">
-        <h2>Phiếu đăng ký nguyện vọng</h2>
-        <form method="POST" action="api/dangky.php" id="form-dangky">
-          <label>Họ và tên học sinh:</label>
-          <input type="text" name="ho_ten" required>
+<div class="form-container">
+  <h2>Phiếu đăng ký nguyện vọng</h2>
+  <form method="POST" action="api/dangky.php" id="form-dangky" onsubmit="return validateForm()">
+    
+    <div id="form-error" class="form-alert-error"></div>
 
-          <label>Lớp 9 hiện tại:</label>
-          <input type="text" name="lop" required>
+    <label>Họ và tên học sinh: <span style="color:red;">*</span></label>
+    <input type="text" name="ho_ten">
 
-          <label>Số báo danh:</label>
-          <input type="text" name="so_bao_danh" required>
+    <label>Lớp 9 hiện tại: <span style="color:red;">*</span></label>
+    <input type="text" name="lop">
 
-          <label>Số điện thoại phụ huynh:</label>
-          <input type="text" name="so_dien_thoai" required>
+    <label>Số báo danh: <span style="color:red;">*</span></label>
+    <input type="text" name="so_bao_danh">
 
-          <label>Email (nếu có):</label>
-          <input type="email" name="email">
+    <label>Số điện thoại phụ huynh: <span style="color:red;">*</span></label>
+    <input type="text" name="so_dien_thoai">
 
-          <label>Nguyện vọng 1:</label>
-          <select name="nv1" required>
-            <option value="">-- Chọn nguyện vọng 1 --</option>
-            <?php foreach ($to_hops as $id => $label): ?>
-              <option value="<?= $id ?>"><?= htmlspecialchars($label) ?></option>
-            <?php endforeach; ?>
-          </select>
+    <label>Email: <span style="color:red;">*</span></label>
+    <input type="email" name="email">
 
-          <label>Nguyện vọng 2:</label>
-          <select name="nv2" required>
-            <option value="">-- Chọn nguyện vọng 2 --</option>
-            <?php foreach ($to_hops as $id => $label): ?>
-              <option value="<?= $id ?>"><?= htmlspecialchars($label) ?></option>
-            <?php endforeach; ?>
-          </select>
+    <label>Nguyện vọng 1: <span style="color:red;">*</span></label>
+    <select name="nv1">
+      <option value="">-- Chọn nguyện vọng 1 --</option>
+      <?php foreach ($to_hops as $id => $label): ?>
+        <option value="<?= $id ?>"><?= htmlspecialchars($label) ?></option>
+      <?php endforeach; ?>
+    </select>
 
-          <p class="note">* Lưu ý: Nguyện vọng 1 và 2 phải khác nhau.</p>
-          <button type="submit">Gửi đăng ký</button>
-        </form>
-      </div>
+    <label>Nguyện vọng 2: <span style="color:red;">*</span></label>
+    <select name="nv2">
+      <option value="">-- Chọn nguyện vọng 2 --</option>
+      <?php foreach ($to_hops as $id => $label): ?>
+        <option value="<?= $id ?>"><?= htmlspecialchars($label) ?></option>
+      <?php endforeach; ?>
+    </select>
+
+    <p class="note">* Các trường có dấu <span style="color:red;">*</span> là bắt buộc. Nguyện vọng 1 và 2 phải khác nhau.</p>
+    <button type="submit">Gửi đăng ký</button>
+  </form>
+</div>
     <?php endif; ?>
   </main>
 
-  <footer>
-    © <?= date("Y"); ?> – <?= $ten_truong; ?> | Năm học: <?= $nam_hoc; ?><br>
-    Website: <a href="https://www.thpthamthuannam.edu.vn" target="_blank" style="color:#004080;"><?= $ten_truong; ?></a>
-  </footer>
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <img src="<?= $logo_path ?>" alt="Logo">
+      <h3>TRƯỜNG THPT<br>HÀM THUẬN NAM</h3>
+    </div>
+    <div class="footer-info">
+      <p>📍 18 Trần Phú, Xã Hàm Thuận Nam, Tỉnh Lâm Đồng</p>
+      <p>📞 02523867255 &nbsp;|&nbsp; 📧 <a href="mailto:c3hamthuannam.binhthuan@moet.edu.vn">c3hamthuannam.binhthuan@moet.edu.vn</a></p>
+      <p>🌐 <a href="http://thpthamthuannam.edu.vn" target="_blank">thpthamthuannam.edu.vn</a> &nbsp;|&nbsp; 📘 <a href="https://www.facebook.com/truongthpthamthuannam" target="_blank">facebook.com/truongthpthamthuannam</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    ✨ Sản phẩm được thiết kế bởi <strong>Thầy Huỳnh Minh Châu</strong>
+  </div>
+</footer>
 
   <!-- SCRIPT ĐẾM NGƯỢC -->
   <?php if ($deadline && $now < $deadline): ?>
@@ -163,5 +177,77 @@ while ($r = $res->fetch_assoc()) {
       }, 1000);
     </script>
   <?php endif; ?>
+
+    <script>
+const sessionError = document.querySelector('.alert-error.show');
+  if (sessionError) {
+    setTimeout(() => {
+      sessionError.classList.remove('show');
+    }, 3000);
+  }
+
+function validateForm() {
+  const fields = [
+    { name: 'ho_ten',        label: 'Họ và tên học sinh' },
+    { name: 'lop',           label: 'Lớp 9 hiện tại' },
+    { name: 'so_bao_danh',   label: 'Số báo danh' },
+    { name: 'so_dien_thoai', label: 'Số điện thoại phụ huynh' },
+  ];
+
+  const errorBox = document.getElementById('form-error');
+
+  // Kiểm tra các trường bắt buộc
+  for (let f of fields) {
+    const el = document.querySelector(`input[name="${f.name}"]`);
+    if (!el || !el.value.trim()) {
+      showError(errorBox, `⚠️ Vui lòng nhập <strong>${f.label}</strong>.`);
+      el && el.focus();
+      return false;
+    }
+  }
+
+  // Kiểm tra email
+  const emailEl = document.querySelector('input[name="email"]');
+  const emailVal = emailEl ? emailEl.value.trim() : '';
+  if (!emailVal) {
+    showError(errorBox, '⚠️ Vui lòng nhập <strong>Email</strong>.');
+    emailEl && emailEl.focus();
+    return false;
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(emailVal)) {
+    showError(errorBox, '⚠️ <strong>Email</strong> không hợp lệ. Ví dụ: ten@gmail.com');
+    emailEl && emailEl.focus();
+    return false;
+  }
+
+  // Kiểm tra nguyện vọng
+  const nv1 = document.querySelector('select[name="nv1"]').value;
+  const nv2 = document.querySelector('select[name="nv2"]').value;
+  if (!nv1) {
+    showError(errorBox, '⚠️ Vui lòng chọn <strong>Nguyện vọng 1</strong>.');
+    return false;
+  }
+  if (!nv2) {
+    showError(errorBox, '⚠️ Vui lòng chọn <strong>Nguyện vọng 2</strong>.');
+    return false;
+  }
+  if (nv1 === nv2) {
+    showError(errorBox, '⚠️ <strong>Nguyện vọng 1 và 2</strong> không được trùng nhau.');
+    return false;
+  }
+
+  return true;
+}
+
+function showError(box, msg) {
+  box.innerHTML = msg;
+  box.classList.add('show');
+
+  setTimeout(() => {
+    box.classList.remove('show');
+  }, 3000);
+}
+</script>
 </body>
 </html>
