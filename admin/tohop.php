@@ -274,7 +274,7 @@ $result = $conn->query("SELECT * FROM to_hop ORDER BY id ASC");
 <body>
 
 <header>
-  <h1>📚 Quản lý tổ hợp môn</h1>
+  <h1>Quản lý tổ hợp môn</h1>
   <div class="btn-group">
     <a href="dashboard.php" class="button">🏠 Dashboard</a>
     <a href="logout.php" class="button danger">🚪 Logout</a>

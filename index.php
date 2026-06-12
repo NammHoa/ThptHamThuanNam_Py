@@ -196,7 +196,6 @@ function validateForm() {
 
   const errorBox = document.getElementById('form-error');
 
-  // Kiểm tra các trường bắt buộc
   for (let f of fields) {
     const el = document.querySelector(`input[name="${f.name}"]`);
     if (!el || !el.value.trim()) {
@@ -206,7 +205,6 @@ function validateForm() {
     }
   }
 
-  // Kiểm tra email
   const emailEl = document.querySelector('input[name="email"]');
   const emailVal = emailEl ? emailEl.value.trim() : '';
   if (!emailVal) {
@@ -221,7 +219,6 @@ function validateForm() {
     return false;
   }
 
-  // Kiểm tra nguyện vọng
   const nv1 = document.querySelector('select[name="nv1"]').value;
   const nv2 = document.querySelector('select[name="nv2"]').value;
   if (!nv1) {
@@ -237,6 +234,11 @@ function validateForm() {
     return false;
   }
 
+  const btn = document.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Đang xử lý...';
+  btn.style.background = '#6c757d';
+  btn.style.cursor = 'not-allowed';
   return true;
 }
 
