@@ -44,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit'
     exit;
 }
 
-// Thông báo session
 if (isset($_SESSION['dash_msg'])) {
     $m = $_SESSION['dash_msg'];
     unset($_SESSION['dash_msg']);
@@ -65,7 +64,6 @@ $r = $conn->query("SELECT nguyen_vong_2, COUNT(*) as cnt FROM hoc_sinh GROUP BY 
 while ($row = $r->fetch_assoc()) $statsNV2[$row['nguyen_vong_2']] = $row['cnt'];
 $allTH = array_unique(array_merge(array_keys($statsNV1), array_keys($statsNV2)));
 
-// Tìm kiếm + phân trang
 $search = trim($_GET['search'] ?? '');
 $page   = max(1, intval($_GET['page'] ?? 1));
 $limit  = 20;
@@ -98,7 +96,8 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="admin_style.css">
+  <link rel="stylesheet" href="admin_style.css?v=3">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
   <style>
     .metric-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin-bottom:20px; }
@@ -188,11 +187,21 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 <header>
   <h1>Admin Dashboard</h1>
   <div class="btn-group">
-    <a href="import_trungtuyen.php" class="button">📥 Tải lên trúng tuyển Excel</a>
-    <a href="download.php" class="button">📤 Tải danh sách đăng kí</a>
-    <a href="deadline.php" class="button">⚙️ Cài đặt hạn đăng ký</a>
-    <a href="tohop.php" class="button">📚 Cập nhật tổ hợp</a>
-    <a href="logout.php" class="button danger">🚪 Đăng xuất</a>
+    <a href="import_trungtuyen.php" class="btn-header">
+      <i class="ti ti-upload"></i> Tải lên Excel
+    </a>
+    <a href="download.php" class="btn-header">
+      <i class="ti ti-download"></i> Tải danh sách
+    </a>
+    <a href="deadline.php" class="btn-header">
+      <i class="ti ti-clock"></i> Hạn đăng ký
+    </a>
+    <a href="tohop.php" class="btn-header">
+      <i class="ti ti-books"></i> Tổ hợp
+    </a>
+    <a href="logout.php" class="btn-header btn-header-danger">
+      <i class="ti ti-logout"></i> Đăng xuất
+    </a>
   </div>
 </header>
 
@@ -208,7 +217,6 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
     </script>
   <?php endif; ?>
 
-  <!-- THỐNG KÊ NHANH -->
   <div class="metric-grid">
     <div class="metric-card">
       <p class="label">Tổng đăng ký</p>
@@ -479,7 +487,7 @@ if (document.getElementById('nvChart')) {
       },
       scales: {
         x: { grid: { display: false }, ticks: { color: '#888' } },
-        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#888' } }
+        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#888', stepSize: 1, precision: 0 } }
       }
     }
   });

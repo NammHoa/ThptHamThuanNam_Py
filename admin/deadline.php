@@ -1,68 +1,135 @@
 <?php
+session_start();
 require_once __DIR__ . '/../config.php';
+
+if (empty($_SESSION['is_admin'])) {
+    header('Location: login.php');
+    exit;
+}
+
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 $conn->set_charset("utf8mb4");
 
-// Xử lý form khi submit
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["deadline"])) {
-    $deadline = $_POST["deadline"];
+$message = '';
+$msgType = '';
 
-    // Kiểm tra xem đã có bản ghi chưa
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["ngay"]) && isset($_POST["gio"])) {
+    $deadline = $_POST["ngay"] . ' ' . $_POST["gio"] . ':00';
     $check = $conn->prepare("SELECT * FROM thietlap WHERE ten = 'han_dang_ky' LIMIT 1");
     $check->execute();
     $result = $check->get_result();
-
     if ($result->num_rows > 0) {
-        // Cập nhật
         $stmt = $conn->prepare("UPDATE thietlap SET gia_tri = ? WHERE ten = 'han_dang_ky'");
-        $stmt->bind_param("s", $deadline);
     } else {
-        // Chưa có, chèn mới
         $stmt = $conn->prepare("INSERT INTO thietlap (ten, gia_tri) VALUES ('han_dang_ky', ?)");
-        $stmt->bind_param("s", $deadline);
     }
-
+    $stmt->bind_param("s", $deadline);
     $stmt->execute();
-    $message = "✅ Đã cập nhật hạn đăng ký thành công.";
+    $message = "✅ Đã cập nhật hạn đăng ký thành công!";
+    $msgType = 'success';
 }
 
-// Lấy giá trị hiện tại nếu có
 $deadline = "";
 $result = $conn->query("SELECT gia_tri FROM thietlap WHERE ten='han_dang_ky' LIMIT 1");
 if ($row = $result->fetch_assoc()) {
     $deadline = $row["gia_tri"];
 }
+
+$deadlineDisplay = $deadline ? date('d/m/Y H:i', strtotime($deadline)) : '';
+$deadlineDateVal = $deadline ? date('Y-m-d', strtotime($deadline)) : '';
+$deadlineTimeVal = $deadline ? date('H:i', strtotime($deadline)) : '';
+
+$now        = new DateTime();
+$deadlineDT = $deadline ? new DateTime($deadline) : null;
+$isExpired  = $deadlineDT && $now > $deadlineDT;
+$timeLeft   = '';
+if ($deadlineDT && !$isExpired) {
+    $diff     = $now->diff($deadlineDT);
+    $timeLeft = $diff->days . ' ngày ' . $diff->h . ' giờ ' . $diff->i . ' phút';
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Thiết lập hạn đăng ký</title>
-	<style>
-    /* ---- Reset & Layout ---- */
-    body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 0; }
-    header { background: #004080; color: #fff; padding: 20px; text-align: center; }
-    header a { color: #fff; margin: 0 10px; text-decoration: none; }
-	main { text-align:center; margin: 10px}
-  </style>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="admin_style.css">
-
+  <title>Thiết lập hạn đăng ký</title>
+  <link rel="stylesheet" href="admin_style.css?v=4">
 </head>
 <body>
-	<header>
-    <h1>⏰Thiết lập thời gian hết hạn đăng ký nguyện vọng</h1>
-   	</header>
-	<main>
-    <?php if (isset($message)) echo "<p style='color: green;'>$message</p>"; ?>
 
+<header>
+  <h1>⏰ Thiết lập thời gian hết hạn đăng ký</h1>
+  <div class="btn-group">
+    <a href="dashboard.php" class="button">🏠 Dashboard</a>
+    <a href="logout.php" class="button danger">🚪 Logout</a>
+  </div>
+</header>
+
+<main>
+<div class="deadline-wrapper">
+
+  <div class="status-card">
+    <?php if (!$deadline): ?>
+      <div class="status-icon none">⚙️</div>
+      <div class="status-info">
+        <p class="s-label">Trạng thái</p>
+        <p class="s-datetime s-none">Chưa thiết lập</p>
+        <p class="s-timeleft s-none-text">Vui lòng cài đặt bên dưới</p>
+      </div>
+      <span class="status-badge badge-none">Chưa có</span>
+    <?php elseif ($isExpired): ?>
+      <div class="status-icon expired">🔒</div>
+      <div class="status-info">
+        <p class="s-label">Đã kết thúc lúc</p>
+        <p class="s-datetime"><?= $deadlineDisplay ?></p>
+        <p class="s-timeleft s-expired">⛔ Đã hết hạn đăng ký</p>
+      </div>
+      <span class="status-badge badge-expired">Đã đóng</span>
+    <?php else: ?>
+      <div class="status-icon active">✅</div>
+      <div class="status-info">
+        <p class="s-label">Hết hạn lúc</p>
+        <p class="s-datetime"><?= $deadlineDisplay ?></p>
+        <p class="s-timeleft s-active">⏳ Còn lại: <?= $timeLeft ?></p>
+      </div>
+      <span class="status-badge badge-active">Đang mở</span>
+    <?php endif; ?>
+  </div>
+
+  <?php if ($message): ?>
+    <div class="result-box result-<?= $msgType ?>" id="result-msg"><?= $message ?></div>
+    <script>
+      setTimeout(() => {
+        const m = document.getElementById('result-msg');
+        if (m) { m.style.transition='opacity 0.5s'; m.style.opacity='0'; setTimeout(()=>m.style.display='none',500); }
+      }, 3000);
+    </script>
+  <?php endif; ?>
+
+  <div class="form-card">
+    <div class="form-card-title">📅 Cài đặt thời hạn mới</div>
     <form method="post">
-        <label for="deadline">Thời hạn (yyyy-mm-dd hh:mm:ss):</label><br>
-        <input type="datetime-local" name="deadline" required
-            value="<?= date('Y-m-d\TH:i', strtotime($deadline)) ?>"><br><br>
-        <button type="submit">💾 Lưu hạn đăng ký</button>
+      <div class="date-time-grid">
+        <div class="field-group">
+          <label>📆 Ngày kết thúc</label>
+          <input type="date" name="ngay" value="<?= $deadlineDateVal ?>" required>
+        </div>
+        <div class="field-group">
+          <label>🕐 Giờ kết thúc</label>
+          <input type="time" name="gio" value="<?= $deadlineTimeVal ?>" required>
+        </div>
+      </div>
+      <button type="submit" class="btn-save-deadline">💾 Lưu hạn đăng ký</button>
     </form>
-    <br><a href="dashboard.php">← QUAY VỀ TRANG QUẢN TRỊ</a>
-	</main>
+  </div>
+
+  <div class="deadline-back">
+    <a href="dashboard.php">← Quay về trang quản trị</a>
+  </div>
+
+</div>
+</main>
+
 </body>
 </html>
