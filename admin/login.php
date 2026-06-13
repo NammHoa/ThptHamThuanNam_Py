@@ -28,16 +28,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->num_rows === 1) {
             $stmt->bind_result($admin_id, $hash);
             $stmt->fetch();
-            if ($password === $hash) {
-                $_SESSION['is_admin'] = true;
-                $_SESSION['admin_id'] = $admin_id;
-                header('Location: dashboard.php');
-                exit;
-            } else {
-                $error = 'Mật khẩu không đúng.';
-            }
+            if (password_verify($password, $hash)) {
+            session_regenerate_id(true);  // chống session fixation
+            $_SESSION['is_admin'] = true;
+            $_SESSION['admin_id'] = $admin_id;
+            header('Location: dashboard.php');
+            exit;
         } else {
-            $error = 'Tên đăng nhập không tồn tại.';
+            $error = 'Tên đăng nhập hoặc mật khẩu không đúng.';
+        }
+        } else {
+            $error = 'Tên đăng nhập hoặc mật khẩu không đúng.';
         }
         $stmt->close();
         $conn->close();

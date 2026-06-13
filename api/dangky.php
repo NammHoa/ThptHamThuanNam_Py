@@ -93,7 +93,11 @@ $stmt->close();
 
 // 8. Lấy tên nguyện vọng
 function getToHopLabel($conn, $id) {
-    $r = $conn->query("SELECT ten_to_hop FROM to_hop WHERE id = $id")->fetch_row();
+    $stmt = $conn->prepare("SELECT ten_to_hop FROM to_hop WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $r = $stmt->get_result()->fetch_row();
+    $stmt->close();
     return $r[0] ?? '';
 }
 $label1 = getToHopLabel($conn, $nv1);
