@@ -3,3 +3,5 @@ vendor/
 *.xlsx
 *.pdf
 composer.phar
+
+config.php
