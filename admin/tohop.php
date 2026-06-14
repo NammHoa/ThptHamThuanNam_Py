@@ -189,7 +189,6 @@ $result = $conn->query("SELECT * FROM to_hop ORDER BY id ASC");
       font-size: 14px;
     }
 
-    /* ===== MODAL ===== */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -272,7 +271,6 @@ $result = $conn->query("SELECT * FROM to_hop ORDER BY id ASC");
   </style>
 </head>
 <body>
-
 <header>
   <h1>Quản lý tổ hợp môn</h1>
   <div class="btn-group">

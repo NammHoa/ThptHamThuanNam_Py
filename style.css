@@ -35,7 +35,6 @@ button.small, a.button-small {
 }
 button.small:hover, a.button-small:hover { background-color: #d68910; }
 
-/* ===== HEADER ===== */
 header {
   background: linear-gradient(135deg, #003366 0%, #004080 60%, #0066cc 100%);
   color: #fff;
@@ -162,9 +161,8 @@ main { padding: 20px; }
   margin-bottom: 14px;
 }
 .form-container {
-  margin: 0 auto;  /* thêm dòng này nếu chưa có */
+  margin: 0 auto;
 }
-/* ===== FORM ===== */
 .form-container {
   background: #fff; padding: 35px;
   max-width: 600px; margin: auto;
@@ -223,7 +221,6 @@ button[type="submit"]:hover {
 }
 .note { font-size: 13px; color: #888; margin-top: 12px; text-align: center; }
 
-/* ===== FOOTER ===== */
 footer {
   background: linear-gradient(180deg, #002855 0%, #003875 100%);
   color: #fff;
@@ -276,7 +273,6 @@ footer {
 }
 .footer-bottom strong { color: #99ccff; }
 
-/* ===== RESPONSIVE TABLET ===== */
 @media (max-width: 768px) {
   .header-inner h1 { font-size: 20px; }
   .header-inner img { height: 80px; width: 80px; }
@@ -287,7 +283,6 @@ footer {
   .cd-number { font-size: 24px; }
 }
 
-/* ===== RESPONSIVE MOBILE ===== */
 @media (max-width: 600px) {
   .header-inner {
     flex-direction: column;
@@ -322,7 +317,6 @@ footer {
   .cd-sep { font-size: 18px; }
 }
 
-/* ===== RESPONSIVE MOBILE NHỎ ===== */
 @media (max-width: 480px) {
   .header-inner img { height: 68px; width: 68px; }
   .header-inner h1 { font-size: 15px; line-height: 1.55; }

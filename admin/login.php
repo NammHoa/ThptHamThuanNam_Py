@@ -71,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       padding: 20px;
     }
 
-    /* Logo + tên trường */
     .login-header {
       text-align: center;
       margin-bottom: 25px;
@@ -97,7 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       font-size: 13px;
     }
 
-    /* Card đăng nhập */
     .login-card {
       background: #fff;
       border-radius: 16px;
@@ -137,7 +135,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       box-shadow: 0 0 0 3px rgba(0,64,128,0.1);
     }
 
-    /* Nút đăng nhập */
     .btn-login {
       width: 100%;
       padding: 13px;
@@ -159,7 +156,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     .btn-login:active { transform: translateY(0); }
 
-    /* Thông báo lỗi */
     .error-box {
       background: #f8d7da;
       color: #721c24;
@@ -235,6 +231,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 
 </div>
-
 </body>
 </html>

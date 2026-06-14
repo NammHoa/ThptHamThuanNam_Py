@@ -2,13 +2,7 @@
 session_start();
 require_once '../config.php';
 
-// ============================================================
-// CẤU HÌNH GMAIL
-// ============================================================
-define('MAIL_FROM',     'namdeptrai270304@gmail.com');
-define('MAIL_PASSWORD', 'odqmmvjzfqndktao');
-define('MAIL_NAME',     'Trường THPT Hàm Thuận Nam');
-// ============================================================
+
 
 require_once __DIR__ . '/../vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;

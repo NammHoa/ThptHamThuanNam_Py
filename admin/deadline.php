@@ -57,9 +57,8 @@ if ($deadlineDT && !$isExpired) {
   <link rel="stylesheet" href="admin_style.css?v=4">
 </head>
 <body>
-
 <header>
-  <h1>⏰ Thiết lập thời gian hết hạn đăng ký</h1>
+  <h1>Thiết lập thời gian hết hạn đăng ký</h1>
   <div class="btn-group">
     <a href="dashboard.php" class="button">🏠 Dashboard</a>
     <a href="logout.php" class="button danger">🚪 Logout</a>

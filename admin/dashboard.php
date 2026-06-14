@@ -183,7 +183,6 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
   </style>
 </head>
 <body>
-
 <header>
   <h1>Admin Dashboard</h1>
   <div class="btn-group">

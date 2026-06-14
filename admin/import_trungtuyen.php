@@ -180,7 +180,6 @@ $totalPages = ceil($total / $limit);
   </style>
 </head>
 <body>
-
 <header>
   <h1>Quản lý danh sách trúng tuyển</h1>
   <div class="btn-group">
@@ -276,7 +275,6 @@ $totalPages = ceil($total / $limit);
       </table>
     </div>
 
-    <!-- Card mobile -->
     <div class="list-card-list">
       <?php $listResult->data_seek(0); $stt = $offset+1; while ($row = $listResult->fetch_assoc()): ?>
         <div class="list-card">
@@ -300,7 +298,6 @@ $totalPages = ceil($total / $limit);
       <?php endwhile; ?>
     </div>
 
-    <!-- Phân trang -->
     <?php if ($totalPages > 1): ?>
       <?php $s = $search ? '&search='.urlencode($search) : ''; ?>
       <div class="pagination">
@@ -341,7 +338,6 @@ $totalPages = ceil($total / $limit);
 
 </main>
 
-<!-- MODAL SỬA -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <div class="modal-header">
@@ -371,7 +367,6 @@ function openEdit(id, ten, sbd, ngay) {
   document.getElementById('edit_ho_ten').value = ten;
   document.getElementById('edit_sbd').value = sbd;
 
-  // Convert dd/mm/yyyy → yyyy-mm-dd cho input type="date"
   let dateVal = '';
   if (ngay && ngay.includes('/')) {
     const parts = ngay.split('/');

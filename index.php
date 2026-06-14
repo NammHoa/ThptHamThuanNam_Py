@@ -2,23 +2,20 @@
 session_start();
 require __DIR__ . '/autoload.php';
 
-// ——————— CẤU HÌNH CHUNG ———————
 $ten_truong = "Trường THPT Hàm Thuận Nam";
 $nam_hoc    = "2025–2026";
 $logo_path  = "images/logo-thpt-cent.jpg";
 $favicon_path = "images/favicon.png";
 // ——————————————————————————
 
-$now = new DateTime();  // Thời điểm hiện tại
+$now = new DateTime();
 
-// Kết nối CSDL
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 if ($conn->connect_error) {
     die("Lỗi kết nối cơ sở dữ liệu: " . $conn->connect_error);
 }
 $conn->set_charset("utf8mb4");
 
-// Lấy deadline từ bảng thietlap
 $deadline = null;
 $res = $conn->query("SELECT gia_tri FROM thietlap WHERE ten='han_dang_ky' LIMIT 1");
 if ($row = $res->fetch_assoc()) {
@@ -43,9 +40,11 @@ while ($r = $res->fetch_assoc()) {
   <title>Đăng ký nguyện vọng lớp 10 – <?= $ten_truong ?></title>
   <link rel="icon" href="<?= $favicon_path ?>">
   <link rel="stylesheet" href="style.css?v=10">
+  <style>#lp-overlay{opacity:1!important;display:flex!important;}</style>
+
 </head>
 <body>
-
+  <?php include __DIR__ . '/loading.php'; ?>
 	<header>
   <div class="admin-bar">
     <?php if (!empty($_SESSION['is_admin'])): ?>
@@ -66,7 +65,6 @@ while ($r = $res->fetch_assoc()) {
   </header>
 
   <main>
-    <!-- THÔNG BÁO THÀNH CÔNG -->
   <?php if ($success): ?>
     <div class="alert alert-success"><?= $success ?></div>
   <?php endif; ?>
@@ -92,7 +90,6 @@ while ($r = $res->fetch_assoc()) {
         <div class="countdown-timer"></div>
       </div>
 
-      <!-- FORM ĐĂNG KÝ -->
 <div class="form-container">
   <h2>Phiếu đăng ký nguyện vọng</h2>
   <form method="POST" action="api/dangky.php" id="form-dangky" onsubmit="return validateForm()">
@@ -154,7 +151,6 @@ while ($r = $res->fetch_assoc()) {
   </div>
 </footer>
 
-  <!-- SCRIPT ĐẾM NGƯỢC -->
   <?php if ($deadline && $now < $deadline): ?>
     <script>
       const deadline = new Date("<?= $deadline->format('Y-m-d\TH:i:s') ?>").getTime();
