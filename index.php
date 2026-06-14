@@ -37,7 +37,6 @@ while ($r = $res->fetch_assoc()) {
   <title>Đăng ký nguyện vọng lớp 10 – <?= $ten_truong ?></title>
   <link rel="icon" href="<?= $favicon_path ?>">
   <link rel="stylesheet" href="style.css?v=10">
-  <style>#lp-overlay{display:flex!important;}</style>
 </head>
 <body>
   <?php include __DIR__ . '/loading.php'; ?>

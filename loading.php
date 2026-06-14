@@ -125,8 +125,15 @@
   var overlay = document.getElementById('lp-overlay');
   var bar     = document.getElementById('lp-bar');
   var txt     = document.getElementById('lp-txt');
-  var p = 0;
 
+  // Không hiện loading nếu trang đang có thông báo success/error
+  var hasMessage = document.querySelector('.alert-success, .alert-error.show');
+  if(hasMessage){
+    overlay.style.display = 'none';
+    return;
+  }
+
+  var p = 0;
   var iv = setInterval(function(){
     if(p < 85){ p += Math.random()*10; if(p>85) p=85;
       bar.style.width = p+'%';
