@@ -238,9 +238,7 @@ function validateForm() {
   btn.innerHTML = '⏳ Đang xử lý...';
   btn.style.background = '#6c757d';
   btn.style.cursor = 'not-allowed';
-  console.log('showOverlay type:', typeof window.showOverlay);
-window.showOverlay && window.showOverlay('Đang gửi đăng ký...');
-  // window.showOverlay('Đang gửi đăng ký...');
+  window.showOverlay('Đang gửi đăng ký...');
   return true;
 }
 
