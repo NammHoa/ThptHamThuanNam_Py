@@ -6,7 +6,6 @@ $ten_truong = "Trường THPT Hàm Thuận Nam";
 $nam_hoc    = "2025–2026";
 $logo_path  = "images/logo-thpt-cent.jpg";
 $favicon_path = "images/favicon.png";
-// ——————————————————————————
 
 $now = new DateTime();
 
@@ -22,11 +21,9 @@ if ($row = $res->fetch_assoc()) {
     $deadline = new DateTime($row['gia_tri']);
 }
 
-// Lấy session thông báo thành công & SBD để sinh QR
 $success = $_SESSION['success'] ?? null;
 unset($_SESSION['success']);
 
-// Lấy danh sách tổ hợp do Admin cấu hình (bảng to_hop)
 $to_hops = [];
 $res = $conn->query("SELECT id, ten_to_hop FROM to_hop ORDER BY id");
 while ($r = $res->fetch_assoc()) {
@@ -40,8 +37,7 @@ while ($r = $res->fetch_assoc()) {
   <title>Đăng ký nguyện vọng lớp 10 – <?= $ten_truong ?></title>
   <link rel="icon" href="<?= $favicon_path ?>">
   <link rel="stylesheet" href="style.css?v=10">
-  <style>#lp-overlay{opacity:1!important;display:flex!important;}</style>
-
+  <style>#lp-overlay{display:flex!important;}</style>
 </head>
 <body>
   <?php include __DIR__ . '/loading.php'; ?>
@@ -75,7 +71,6 @@ while ($r = $res->fetch_assoc()) {
       <div class="alert alert-error show"><?= $error ?></div>
   <?php endif; ?>
     
-    <!-- HIỂN THỊ ĐẾM NGƯỢC HOẶC THÔNG BÁO HẾT HẠN -->
     <?php if (!$deadline): ?>
       <div class="alert" style="background: #f8d7da; color: #721c24;">
         ⚠️ Chưa cấu hình thời hạn đăng ký trong hệ thống.
