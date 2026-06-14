@@ -5,6 +5,7 @@
   background:linear-gradient(135deg,#003366,#004080,#0066cc);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   font-family:'Montserrat',sans-serif;
+  opacity:1;transition:opacity 0.5s ease;
 }
 #lp-overlay .lp-ring{
   width:90px;height:90px;border-radius:50%;
@@ -125,32 +126,45 @@
   var overlay = document.getElementById('lp-overlay');
   var bar     = document.getElementById('lp-bar');
   var txt     = document.getElementById('lp-txt');
+  var p = 0, iv, startTime = Date.now();
 
-  // Không hiện loading nếu trang đang có thông báo success/error
-  var hasMessage = document.querySelector('.alert-success, .alert-error.show');
-  if(hasMessage){
-    overlay.style.display = 'none';
-    return;
+  function startBar(from) {
+    p = from || 0;
+    bar.style.width = p + '%';
+    clearInterval(iv);
+    iv = setInterval(function(){
+      if(p < 85){ p += Math.random()*10; if(p>85) p=85; bar.style.width=p+'%'; }
+    }, 200);
   }
 
-  var p = 0;
-  var iv = setInterval(function(){
-    if(p < 85){ p += Math.random()*10; if(p>85) p=85;
-      bar.style.width = p+'%';
-    }
-  }, 200);
-
-  var startTime = Date.now();
-  window.addEventListener('load', function(){
+  function hideOverlay() {
     clearInterval(iv);
     bar.style.width = '100%';
     txt.textContent = 'Hoàn tất';
     var delay = Math.max(0, 500-(Date.now()-startTime));
     setTimeout(function(){
-      overlay.style.transition = 'opacity 0.5s ease';
       overlay.style.opacity = '0';
       setTimeout(function(){ overlay.style.display='none'; }, 500);
     }, delay);
+  }
+
+  window.showOverlay = function(msg) {
+    overlay.style.display  = 'flex';
+    overlay.style.opacity  = '1';
+    overlay.style.transition = 'none';
+    txt.textContent = msg || 'Đang tải';
+    startTime = Date.now();
+    startBar(0);
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var hasMessage = document.querySelector('.alert-success, .alert-error.show');
+    if(hasMessage){
+      overlay.style.display = 'none';
+      return;
+    }
+    startBar(0);
+    window.addEventListener('load', hideOverlay);
   });
 
 })();
