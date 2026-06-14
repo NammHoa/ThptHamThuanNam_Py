@@ -78,7 +78,6 @@ $isExpired  = $deadlineDT && $now >= $deadlineDT;
       display: flex; flex-direction: column; gap: 20px;
     }
 
-    /* TOAST */
     .toast {
       display: flex; align-items: center; gap: 12px;
       padding: 14px 20px; border-radius: 12px;
@@ -98,13 +97,11 @@ $isExpired  = $deadlineDT && $now >= $deadlineDT;
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* CARD DÍNH LIỀN */
     .main-card {
       border-radius: 18px; overflow: hidden;
       box-shadow: 0 8px 32px rgba(0,0,0,0.14);
     }
 
-    /* PHẦN TRÊN – STATUS */
     .card-top {
       padding: 22px 24px 28px;
       position: relative; overflow: hidden;
@@ -185,7 +182,6 @@ $isExpired  = $deadlineDT && $now >= $deadlineDT;
       100% { left: 100%; }
     }
 
-    /* PHẦN DƯỚI – FORM (trắng) */
     .card-bottom { background: #fff; padding: 22px 28px 24px; }
     .form-title {
       font-size: 12px; font-weight: 600; color: #888;
@@ -234,7 +230,7 @@ $isExpired  = $deadlineDT && $now >= $deadlineDT;
 <body>
 
 <header>
-  <h1>⏰ Thiết lập thời gian hết hạn đăng ký nguyện vọng</h1>
+  <h1>Thiết lập thời gian hết hạn đăng ký nguyện vọng</h1>
   <div class="btn-group">
     <a href="dashboard.php" class="btn-header"><i class="ti ti-home"></i> Dashboard</a>
     <a href="logout.php" class="btn-header btn-header-danger"><i class="ti ti-logout"></i> Đăng xuất</a>
@@ -262,7 +258,6 @@ $isExpired  = $deadlineDT && $now >= $deadlineDT;
 
   <div class="main-card">
 
-    <!-- STATUS -->
     <div class="card-top <?= !$deadline ? 'none' : ($isExpired ? 'expired' : 'active') ?>" id="card-top">
       <?php if (!$deadline): ?>
         <div class="top-row1">
