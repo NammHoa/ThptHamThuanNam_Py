@@ -109,7 +109,7 @@
 
   <div class="lp-ring">
     <div class="lp-logo">
-      <img src="/nguyenvong/images/logo-thpt-cent.jpg" alt="Logo">
+      <img src="images/logo-thpt-cent.jpg" alt="Logo">
     </div>
   </div>
   <div class="lp-name">THPT Hàm Thuận Nam</div>

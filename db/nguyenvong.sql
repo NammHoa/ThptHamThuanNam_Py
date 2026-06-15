@@ -14,12 +14,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-
--- Dumping database structure for nguyenvong
-DROP DATABASE IF EXISTS `nguyenvong`;
-CREATE DATABASE IF NOT EXISTS `nguyenvong` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_vietnamese_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `nguyenvong`;
-
 -- Dumping structure for table nguyenvong.admin_users
 DROP TABLE IF EXISTS `admin_users`;
 CREATE TABLE IF NOT EXISTS `admin_users` (
