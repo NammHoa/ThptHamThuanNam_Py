@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file_excel'])) {
     $spreadsheet = IOFactory::load($_FILES['file_excel']['tmp_name']);
     $sheetData   = $spreadsheet->getActiveSheet()->toArray();
     $count = 0;
-    for ($i = 2; $i < count($sheetData); $i++) {
+    for ($i = 3; $i < count($sheetData); $i++) {
         $sbd       = trim($sheetData[$i][1] ?? '');
         $name      = trim($sheetData[$i][2] ?? '');
         $ngay_sinh = trim($sheetData[$i][3] ?? '');
