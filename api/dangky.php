@@ -117,22 +117,41 @@ if (!$stmt->execute()) {
 
 // 11. Gửi email xác nhận nếu có
 if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $subject = "Xác nhận đăng ký nguyện vọng lớp 10";
-    $body    = "
-    <html><body>
-      <h3>Xin chào {$ho_ten},</h3>
-      <p>Bạn đã đăng ký nguyện vọng thành công:</p>
-      <ul>
-        <li><strong>NV1:</strong> {$label1}</li>
-        <li><strong>NV2:</strong> {$label2}</li>
-      </ul>
-      <p>Trân trọng,<br>Trường THPT Hàm Thuận Nam</p>
-    </body></html>";
-    $headers  = "MIME-Version: 1.0\r\n";
-    $headers .= "Content-type:text/html;charset=UTF-8\r\n";
-    $headers .= "From: no-reply@thamthuannam.edu.vn";
-    mail($email, $subject, $body, $headers);
+    require_once __DIR__ . '/../vendor/autoload.php';
+
+    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = MAIL_FROM;
+        $mail->Password   = MAIL_PASSWORD;
+        $mail->SMTPSecure = 'tls';
+        $mail->Port       = 587;
+        $mail->CharSet    = 'UTF-8';
+
+        $mail->setFrom(MAIL_FROM, MAIL_NAME);
+        $mail->addAddress($email, $ho_ten);
+
+        $mail->isHTML(true);
+        $mail->Subject = "Xác nhận đăng ký nguyện vọng lớp 10";
+        $mail->Body    = "
+        <html><body>
+          <h3>Xin chào {$ho_ten},</h3>
+          <p>Bạn đã đăng ký nguyện vọng thành công:</p>
+          <ul>
+            <li><strong>NV1:</strong> {$label1}</li>
+            <li><strong>NV2:</strong> {$label2}</li>
+          </ul>
+          <p>Trân trọng,<br>Trường THPT Hàm Thuận Nam</p>
+        </body></html>";
+
+        $mail->send();
+    } catch (Exception $e) {
+        error_log("Lỗi gửi mail: " . $mail->ErrorInfo);
+    }
 }
+
 
 // 12. Thông báo thành công và redirect
 $_SESSION['success'] = "✅ Đăng ký thành công! SBD: {$so_bao_danh}";

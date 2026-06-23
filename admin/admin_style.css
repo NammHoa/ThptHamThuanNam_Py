@@ -1,4 +1,7 @@
 @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
+html {
+  overflow: auto;
+}
 * { box-sizing: border-box; }
 
 body {
@@ -7,6 +10,7 @@ body {
   margin: 0;
   padding: 0;
   color: #333;
+  min-height: 100vh;
 }
 
 header {
@@ -15,6 +19,11 @@ header {
   padding: 20px 20px 15px 20px;
   text-align: center;
   box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
 }
 header h1 {
   margin: 0 0 15px 0;
@@ -49,7 +58,7 @@ header h1 {
 .button.info { background: #007bff; }
 .button.info:hover { background: #0056b3; }
 
-main { padding: 20px; }
+main { padding: 20px; margin-top: 130px; }
 main h2 {
   font-size: 18px;
   margin-bottom: 15px;
@@ -268,7 +277,7 @@ a:hover { text-decoration: underline; }
 @media (max-width: 768px) {
   header h1 { font-size: 22px; }
   .button { font-size: 13px; padding: 8px 13px; }
-  main { padding: 15px; }
+  main { padding: 15px;}
 }
 
 @media (max-width: 600px) {
@@ -279,7 +288,7 @@ a:hover { text-decoration: underline; }
   .form-box { padding: 20px 15px; margin: 15px; }
   .upload-box { padding: 20px 15px; margin: 15px; }
   .alert { margin: 0 0 15px 0; }
-  main { padding: 12px; }
+  main { padding: 12px; margin-top: 130px; }
   main h2 { font-size: 15px; }
 }
 
@@ -395,7 +404,6 @@ a:hover { text-decoration: underline; }
 .back-link a { color: #004080; text-decoration: none; font-size: 14px; }
 .back-link a:hover { text-decoration: underline; }
  
-/* ===== DEADLINE PAGE ===== */
 .deadline-wrapper { max-width: 540px; margin: 30px auto; padding: 0 15px; }
 .status-card {
   background: #fff; border-radius: 12px; padding: 20px 22px;
