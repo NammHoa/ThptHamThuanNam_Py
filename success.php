@@ -30,6 +30,7 @@ $favicon_path = "images/favicon.png";
   <title>Đăng ký thành công – <?= $ten_truong ?></title>
   <link rel="icon" href="<?= $favicon_path ?>">
   <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     .sc-wrap {
       max-width: 540px;
@@ -55,8 +56,8 @@ $favicon_path = "images/favicon.png";
       border: 2px solid rgba(255,255,255,0.4);
       background: rgba(255,255,255,0.15);
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; color: #fff;
     }
+    .sc-check i { font-size: 24px; color: #fff; }
     .sc-banner h2 {
       color: #fff; font-size: 19px; font-weight: 600; margin: 0 0 5px; text-align: left;
     }
@@ -100,7 +101,7 @@ $favicon_path = "images/favicon.png";
       border-radius: 10px;
       padding: 14px 16px;
     }
-    .sc-note-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .sc-note i { font-size: 18px; color: #b45309; flex-shrink: 0; margin-top: 1px; }
     .sc-note strong { display: block; font-size: 13px; font-weight: 600; color: #92400e; margin-bottom: 3px; }
     .sc-note span { font-size: 13px; color: #92400e; line-height: 1.6; }
 
@@ -114,6 +115,7 @@ $favicon_path = "images/favicon.png";
       font-size: 14.5px; text-decoration: none;
       transition: background .15s;
     }
+    .sc-btn-home i { font-size: 18px; }
     .sc-btn-home:hover { background: #f9fafb; color: #374151; text-decoration: none; }
 
     @media print {
@@ -158,7 +160,9 @@ $favicon_path = "images/favicon.png";
     <div class="sc-card">
 
       <div class="sc-banner">
-        <div class="sc-check">✓</div>
+        <div class="sc-check">
+          <i class="ti ti-check"></i>
+        </div>
         <div style="text-align: left;">
           <h2>Đăng ký thành công!</h2>
           <p>Thông tin nguyện vọng đã được ghi nhận.<br>Vui lòng chụp màn hình để lưu lại.</p>
@@ -196,7 +200,7 @@ $favicon_path = "images/favicon.png";
         </div>
 
         <div class="sc-note">
-          <span class="sc-note-icon">⚠️</span>
+          <i class="ti ti-alert-triangle"></i>
           <div>
             <strong>Lưu ý quan trọng</strong>
             <span>Mỗi số báo danh chỉ được đăng ký một lần. Nếu cần thay đổi nguyện vọng, vui lòng liên hệ trực tiếp với nhà trường.</span>
@@ -204,7 +208,9 @@ $favicon_path = "images/favicon.png";
         </div>
 
         <div class="sc-actions">
-          <a href="index.php" class="sc-btn-home">← Quay về trang chủ</a>
+          <a href="index.php" class="sc-btn-home">
+            <i class="ti ti-arrow-left"></i> Quay về trang chủ
+          </a>
         </div>
 
       </div>
@@ -232,8 +238,10 @@ $favicon_path = "images/favicon.png";
 <button id="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"
   style="display:none;position:fixed;bottom:24px;right:20px;z-index:999;
     width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;
-    background:linear-gradient(135deg,#003366,#0066cc);color:#fff;font-size:20px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.25);align-items:center;justify-content:center;">↑</button>
+    background:linear-gradient(135deg,#003366,#0066cc);color:#fff;
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);align-items:center;justify-content:center;">
+  <i class="ti ti-arrow-up" style="font-size:20px;"></i>
+</button>
 <script>
 (function(){
   var btn    = document.getElementById('btn-top');

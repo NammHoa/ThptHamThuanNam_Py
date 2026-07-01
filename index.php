@@ -37,7 +37,8 @@ while ($r = $res->fetch_assoc()) {
   <meta charset="UTF-8">
   <title>Đăng ký nguyện vọng lớp 10 – <?= $ten_truong ?></title>
   <link rel="icon" type="image/x-icon" href="<?= $favicon_path ?>">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     .expired-card {
       max-width: 480px; margin: 40px auto;
@@ -56,7 +57,8 @@ while ($r = $res->fetch_assoc()) {
       background: rgba(255,255,255,0.06);
       top: -60px; right: -40px; pointer-events: none;
     }
-    .expired-icon  { font-size: 52px; display: block; margin-bottom: 14px; }
+    .expired-icon  { display: block; margin-bottom: 14px; }
+    .expired-icon i { font-size: 52px; color: #fff; }
     .expired-title { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px; }
     .expired-time  { font-size: 13px; color: rgba(255,255,255,0.75); }
 
@@ -66,6 +68,18 @@ while ($r = $res->fetch_assoc()) {
     .expired-msg {
       font-size: 14px; color: #555; line-height: 1.8;
     }
+
+    /* Nút tra cứu */
+    .tc-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 32px;
+      background: #fff; color: #004080;
+      border: 2px solid #004080; border-radius: 10px;
+      font-size: 14.5px; font-weight: 600; text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+    .tc-link:hover { background: #004080; color: #fff; text-decoration: none; }
+    .tc-link i { font-size: 18px; }
   </style>
 </head>
 <body>
@@ -91,34 +105,37 @@ while ($r = $res->fetch_assoc()) {
   </header>
 
   <main>
-<?php if ($success): ?>
-  <div class="alert alert-success" id="alert-success"><?= $success ?></div>
-  <script>
-    setTimeout(() => {
-      const a = document.getElementById('alert-success');
-      if (a) { a.style.transition='opacity 0.5s'; a.style.opacity='0'; setTimeout(()=>a.style.display='none',500); }
-    }, 3000);
-  </script>
-<?php endif; ?>
-<?php if ($error): ?>
-  <div class="alert alert-error show" id="alert-error"><?= $error ?></div>
-  <script>
-    setTimeout(() => {
-      const a = document.getElementById('alert-error');
-      if (a) { a.style.transition='opacity 0.5s'; a.style.opacity='0'; setTimeout(()=>a.style.display='none',500); }
-    }, 3000);
-  </script>
-<?php endif; ?>
+    <?php if ($success): ?>
+      <div class="alert alert-success" id="alert-success"><?= $success ?></div>
+      <script>
+        setTimeout(() => {
+          const a = document.getElementById('alert-success');
+          if (a) { a.style.transition='opacity 0.5s'; a.style.opacity='0'; setTimeout(()=>a.style.display='none',500); }
+        }, 3000);
+      </script>
+    <?php endif; ?>
+    <?php if ($error): ?>
+      <div class="alert alert-error show" id="alert-error"><?= $error ?></div>
+      <script>
+        setTimeout(() => {
+          const a = document.getElementById('alert-error');
+          if (a) { a.style.transition='opacity 0.5s'; a.style.opacity='0'; setTimeout(()=>a.style.display='none',500); }
+        }, 3000);
+      </script>
+    <?php endif; ?>
 
     <?php if (!$deadline): ?>
       <div class="alert" style="background:#f8d7da;color:#721c24;max-width:520px;margin:40px auto;">
-        ⚠️ Chưa cấu hình thời hạn đăng ký trong hệ thống.
+        <i class="ti ti-alert-triangle" style="font-size:18px;vertical-align:-3px;"></i>
+        Chưa cấu hình thời hạn đăng ký trong hệ thống.
       </div>
 
     <?php elseif ($now > $deadline): ?>
       <div class="expired-card">
         <div class="expired-top">
-          <span class="expired-icon">🔒</span>
+          <span class="expired-icon">
+            <i class="ti ti-lock"></i>
+          </span>
           <div class="expired-title">Đã hết hạn đăng ký</div>
           <div class="expired-time">Kết thúc lúc: <?= $deadline->format('H:i – d/m/Y') ?></div>
         </div>
@@ -179,24 +196,73 @@ while ($r = $res->fetch_assoc()) {
         </form>
       </div>
     <?php endif; ?>
+
+    <div style="text-align:center; margin: 16px auto 32px; max-width: 600px; padding: 0 16px;">
+      <p style="font-size:13px; color:#888; margin-bottom:10px;">
+        Đã đăng ký? Kiểm tra lại thông tin nguyện vọng của bạn tại đây.
+      </p>
+      <a href="lookupinf.php" class="tc-link">
+        <i class="ti ti-search"></i>
+        Tra cứu kết quả đăng ký nguyện vọng
+      </a>
+    </div>
+
   </main>
 
-  <footer>
-    <div class="footer-main">
-      <div class="footer-brand">
-        <img src="<?= $logo_path ?>" alt="Logo">
+<footer>
+  <div class="footer-accent"></div>
+  <div class="footer-body">
+
+    <div class="footer-brand">
+      <img src="<?= $logo_path ?>" alt="Logo">
+      <div class="footer-brand-text">
         <h3>TRƯỜNG THPT<br>HÀM THUẬN NAM</h3>
-      </div>
-      <div class="footer-info">
-        <p>📍 18 Trần Phú, Xã Hàm Thuận Nam, Tỉnh Lâm Đồng</p>
-        <p>📞 02523867255 &nbsp;|&nbsp; 📧 <a href="mailto:c3hamthuannam.binhthuan@moet.edu.vn">c3hamthuannam.binhthuan@moet.edu.vn</a></p>
-        <p>🌐 <a href="http://thpthamthuannam.edu.vn" target="_blank">thpthamthuannam.edu.vn</a> &nbsp;|&nbsp; 📘 <a href="https://www.facebook.com/truongthpthamthuannam" target="_blank">facebook.com/truongthpthamthuannam</a></p>
+        <p>Môi trường giáo dục xanh – sạch – đẹp – an toàn</p>
       </div>
     </div>
-    <div class="footer-bottom">
-      ✨ Sản phẩm được thiết kế bởi <strong>Thầy Huỳnh Minh Châu</strong>
+
+    <div class="footer-info">
+      <div class="footer-info-item">
+        <i class="ti ti-map-pin"></i>
+        <span>18 Trần Phú, Xã Hàm Thuận Nam, Tỉnh Lâm Đồng</span>
+      </div>
+      <div class="footer-info-item">
+        <i class="ti ti-phone"></i>
+        <span>02523867255</span>
+      </div>
+      <div class="footer-info-item">
+        <i class="ti ti-mail"></i>
+        <a href="mailto:c3hamthuannam.binhthuan@moet.edu.vn">c3hamthuannam.binhthuan@moet.edu.vn</a>
+      </div>
+      <div class="footer-info-item">
+        <i class="ti ti-world"></i>
+        <a href="http://thpthamthuannam.edu.vn" target="_blank">thpthamthuannam.edu.vn</a>
+      </div>
     </div>
-  </footer>
+
+    <div class="footer-fb">
+      <div class="fb-page"
+        data-href="https://www.facebook.com/truongthpthamthuannam"
+        data-tabs="timeline"
+        data-width="260"
+        data-height="200"
+        data-small-header="true"
+        data-adapt-container-width="false"
+        data-hide-cover="false"
+        data-show-facepile="false">
+      </div>
+    </div>
+
+  </div>
+  <div class="footer-bottom">
+    <span>© <?= date('Y') ?> Trường THPT Hàm Thuận Nam. Thiết kế bởi <strong>Thầy Huỳnh Minh Châu</strong></span>
+  </div>
+</footer>
+
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous"
+  src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v19.0">
+</script>
 
   <?php if ($deadline && $now < $deadline): ?>
   <script>
@@ -207,7 +273,7 @@ while ($r = $res->fetch_assoc()) {
       const distance = deadlineTs - now;
       if (distance <= 0) {
         clearInterval(x);
-        countdown.innerHTML = "<span style='color:#dc3545;font-size:18px;'>⏰ ĐÃ HẾT HẠN ĐĂNG KÝ</span>";
+        countdown.innerHTML = "<span style='color:#dc3545;font-size:18px;'><i class='ti ti-clock-off'></i> ĐÃ HẾT HẠN ĐĂNG KÝ</span>";
         const formContainer = document.querySelector(".form-container");
         if (formContainer) formContainer.style.display = "none";
       } else {
@@ -244,7 +310,7 @@ while ($r = $res->fetch_assoc()) {
       for (let f of fields) {
         const el = document.querySelector(`input[name="${f.name}"]`);
         if (!el || !el.value.trim()) {
-          showError(errorBox, `⚠️ Vui lòng nhập <strong>${f.label}</strong>.`);
+          showError(errorBox, `<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> Vui lòng nhập <strong>${f.label}</strong>.`);
           el && el.focus(); return false;
         }
       }
@@ -252,23 +318,23 @@ while ($r = $res->fetch_assoc()) {
       const emailEl  = document.querySelector('input[name="email"]');
       const emailVal = emailEl ? emailEl.value.trim() : '';
       if (!emailVal) {
-        showError(errorBox, '⚠️ Vui lòng nhập <strong>Email</strong>.');
+        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> Vui lòng nhập <strong>Email</strong>.');
         emailEl && emailEl.focus(); return false;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-        showError(errorBox, '⚠️ <strong>Email</strong> không hợp lệ. Ví dụ: ten@gmail.com');
+        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Email</strong> không hợp lệ. Ví dụ: ten@gmail.com');
         emailEl && emailEl.focus(); return false;
       }
 
       const nv1 = document.querySelector('select[name="nv1"]').value;
       const nv2 = document.querySelector('select[name="nv2"]').value;
-      if (!nv1) { showError(errorBox, '⚠️ Vui lòng chọn <strong>Nguyện vọng 1</strong>.'); return false; }
-      if (!nv2) { showError(errorBox, '⚠️ Vui lòng chọn <strong>Nguyện vọng 2</strong>.'); return false; }
-      if (nv1 === nv2) { showError(errorBox, '⚠️ <strong>Nguyện vọng 1 và 2</strong> không được trùng nhau.'); return false; }
+      if (!nv1) { showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> Vui lòng chọn <strong>Nguyện vọng 1</strong>.'); return false; }
+      if (!nv2) { showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> Vui lòng chọn <strong>Nguyện vọng 2</strong>.'); return false; }
+      if (nv1 === nv2) { showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Nguyện vọng 1 và 2</strong> không được trùng nhau.'); return false; }
 
       const btn = document.querySelector('button[type="submit"]');
       btn.disabled = true;
-      btn.innerHTML = '⏳ Đang xử lý...';
+      btn.innerHTML = '<i class="ti ti-loader-2" style="font-size:16px;vertical-align:-2px;animation:spin .8s linear infinite;"></i> Đang xử lý...';
       btn.style.background = '#6c757d';
       btn.style.cursor = 'not-allowed';
       window.showOverlay && window.showOverlay('Đang gửi đăng ký...');
@@ -281,27 +347,34 @@ while ($r = $res->fetch_assoc()) {
       setTimeout(() => box.classList.remove('show'), 3000);
     }
   </script>
-<button id="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"
-  style="display:none;position:fixed;bottom:24px;right:20px;z-index:999;
-    width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;
-    background:linear-gradient(135deg,#003366,#0066cc);color:#fff;font-size:20px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.25);align-items:center;justify-content:center;">↑</button>
 
-<script>
-(function(){
-  var btn    = document.getElementById('btn-top');
-  var footer = document.querySelector('footer');
-  window.addEventListener('scroll', function(){
-    var scrollY     = window.scrollY;
-    var footerTop   = footer ? footer.offsetTop : 999999;
-    var btnBottom   = scrollY + window.innerHeight - 80;
-    if (scrollY > 300 && btnBottom < footerTop) {
-      btn.style.display = 'flex';
-    } else {
-      btn.style.display = 'none';
-    }
-  });
-})();
-</script>
+  <style>
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  </style>
+
+  <button id="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+    style="display:none;position:fixed;bottom:24px;right:20px;z-index:999;
+      width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;
+      background:linear-gradient(135deg,#003366,#0066cc);color:#fff;font-size:20px;
+      box-shadow:0 4px 14px rgba(0,0,0,0.25);align-items:center;justify-content:center;">
+    <i class="ti ti-arrow-up" style="font-size:20px;"></i>
+  </button>
+
+  <script>
+  (function(){
+    var btn    = document.getElementById('btn-top');
+    var footer = document.querySelector('footer');
+    window.addEventListener('scroll', function(){
+      var scrollY     = window.scrollY;
+      var footerTop   = footer ? footer.offsetTop : 999999;
+      var btnBottom   = scrollY + window.innerHeight - 80;
+      if (scrollY > 300 && btnBottom < footerTop) {
+        btn.style.display = 'flex';
+      } else {
+        btn.style.display = 'none';
+      }
+    });
+  })();
+  </script>
 </body>
 </html>

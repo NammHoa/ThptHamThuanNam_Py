@@ -14,7 +14,6 @@ $conn->set_charset("utf8mb4");
 $resultMsg  = '';
 $resultType = '';
 
-//xóa
 if (isset($_GET['delete_id'])) {
     $id = intval($_GET['delete_id']);
     $stmt = $conn->prepare("DELETE FROM hoc_sinh WHERE id = ?");
@@ -25,7 +24,7 @@ if (isset($_GET['delete_id'])) {
     header("Location: dashboard.php");
     exit;
 }
-//sửa
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit') {
     $id    = intval($_POST['edit_id']);
     $ten   = trim($_POST['edit_ho_ten']);
@@ -47,14 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit'
 if (isset($_SESSION['dash_msg'])) {
     $m = $_SESSION['dash_msg'];
     unset($_SESSION['dash_msg']);
-    if ($m === 'deleted') { $resultMsg = "✅ Đã xoá học sinh thành công.";       $resultType = 'success'; }
-    if ($m === 'edited')  { $resultMsg = "✅ Đã cập nhật thông tin thành công."; $resultType = 'success'; }
+    if ($m === 'deleted') { $resultMsg = "Đã xoá học sinh thành công.";       $resultType = 'success'; }
+    if ($m === 'edited')  { $resultMsg = "Đã cập nhật thông tin thành công."; $resultType = 'success'; }
 }
 
-$tongHS   = $conn->query("SELECT COUNT(*) FROM hoc_sinh")->fetch_row()[0];
-$homNay   = $conn->query("SELECT COUNT(*) FROM hoc_sinh WHERE DATE(ngay_dang_ky) = CURDATE()")->fetch_row()[0];
-$tongTT   = $conn->query("SELECT COUNT(*) FROM danh_sach_trung_tuyen")->fetch_row()[0];
-$chuaDK   = max(0, $tongTT - $tongHS);
+$tongHS = $conn->query("SELECT COUNT(*) FROM hoc_sinh")->fetch_row()[0];
+$homNay = $conn->query("SELECT COUNT(*) FROM hoc_sinh WHERE DATE(ngay_dang_ky) = CURDATE()")->fetch_row()[0];
+$tongTT = $conn->query("SELECT COUNT(*) FROM danh_sach_trung_tuyen")->fetch_row()[0];
+$chuaDK = max(0, $tongTT - $tongHS);
 
 $statsNV1 = [];
 $statsNV2 = [];
@@ -85,7 +84,6 @@ $list->execute();
 $listResult = $list->get_result();
 $totalPages = ceil($total / $limit);
 
-
 $tohops = [];
 $r = $conn->query("SELECT ten_to_hop FROM to_hop ORDER BY id");
 while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
@@ -107,17 +105,17 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
     .metric-card .sub   { font-size:12px; color:#aaa; margin:4px 0 0; }
 
     .stat-section { background:#fff; border-radius:10px; padding:20px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.07); }
-    .stat-section h3 { color:#004080; margin:0 0 15px; font-size:16px; }
+    .stat-section h3 { color:#004080; margin:0 0 15px; font-size:16px; display:flex; align-items:center; gap:8px; }
 
     .search-bar { display:flex; gap:10px; align-items:center; background:#fff; border-radius:10px; padding:14px 18px; margin-bottom:15px; box-shadow:0 2px 8px rgba(0,0,0,0.07); flex-wrap:wrap; }
     .search-bar input { flex:1; min-width:200px; padding:9px 14px; border:1px solid #ccc; border-radius:8px; font-size:14px; }
     .search-bar input:focus { border-color:#004080; outline:none; }
-    .btn-search { padding:9px 20px; background:#004080; color:#fff; border:none; border-radius:8px; font-size:14px; cursor:pointer; }
+    .btn-search { display:inline-flex; align-items:center; gap:6px; padding:9px 20px; background:#004080; color:#fff; border:none; border-radius:8px; font-size:14px; cursor:pointer; }
     .btn-search:hover { background:#003060; }
-    .btn-reset { padding:9px 14px; background:#e0e0e0; color:#555; border:none; border-radius:8px; font-size:14px; cursor:pointer; text-decoration:none; }
+    .btn-reset  { display:inline-flex; align-items:center; gap:6px; padding:9px 14px; background:#e0e0e0; color:#555; border:none; border-radius:8px; font-size:14px; cursor:pointer; text-decoration:none; }
     .btn-reset:hover { background:#ccc; text-decoration:none; }
 
-    .result-box { padding:12px 16px; border-radius:8px; margin-bottom:15px; font-size:14px; }
+    .result-box { display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:8px; margin-bottom:15px; font-size:14px; }
     .result-success { background:#d4edda; color:#155724; border-left:4px solid #28a745; }
 
     .table-wrapper { background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.07); overflow-x:auto; }
@@ -127,10 +125,10 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
     tbody tr:last-child td { border-bottom:none; }
     tbody tr:hover td { background:#f8f9ff; }
 
-    .btn-edit-row { padding:4px 9px; background:transparent; color:#007bff; border:1px solid #007bff; border-radius:5px; font-size:11px; cursor:pointer; margin-right:3px; transition:all 0.2s; }
+    .btn-edit-row { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; background:transparent; color:#007bff; border:1px solid #007bff; border-radius:5px; font-size:11px; cursor:pointer; margin-right:3px; transition:all 0.2s; }
     .btn-edit-row:hover { background:#007bff; color:#fff; }
-    .btn-del-row  { padding:4px 9px; background:transparent; color:#dc3545; border:1px solid #dc3545; border-radius:5px; font-size:11px; cursor:pointer; transition:all 0.2s; }
-    .btn-del-row:hover  { background:#dc3545; color:#fff; }
+    .btn-del-row  { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; background:transparent; color:#dc3545; border:1px solid #dc3545; border-radius:5px; font-size:11px; cursor:pointer; transition:all 0.2s; text-decoration:none; }
+    .btn-del-row:hover  { background:#dc3545; color:#fff; text-decoration:none; }
 
     .search-info { font-size:13px; color:#888; margin-bottom:10px; }
 
@@ -153,15 +151,15 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
     .modal { background:#fff; border-radius:12px; padding:25px; width:100%; max-width:520px; box-shadow:0 10px 40px rgba(0,0,0,0.2); animation:slideIn 0.2s ease; max-height:90vh; overflow-y:auto; }
     @keyframes slideIn { from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
     .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:12px; border-bottom:2px solid #f0f4f8; }
-    .modal-title { font-size:16px; font-weight:bold; color:#004080; margin:0; }
+    .modal-title { font-size:16px; font-weight:bold; color:#004080; margin:0; display:flex; align-items:center; gap:8px; }
     .modal-close { background:none; border:none; font-size:22px; cursor:pointer; color:#888; }
     .modal label { display:block; font-weight:bold; color:#444; font-size:13px; margin:10px 0 4px; }
     .modal input, .modal select { width:100%; padding:8px 12px; border:1px solid #ccc; border-radius:7px; font-size:14px; box-sizing:border-box; }
     .modal input:focus, .modal select:focus { border-color:#004080; outline:none; }
     .modal-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:15px; }
-    .btn-cancel { padding:8px 16px; background:#e0e0e0; color:#555; border:none; border-radius:7px; font-size:13px; cursor:pointer; }
-    .btn-save   { padding:8px 20px; background:linear-gradient(135deg,#28a745,#20c050); color:#fff; border:none; border-radius:7px; font-size:13px; font-weight:bold; cursor:pointer; }
+    .btn-cancel { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:#e0e0e0; color:#555; border:none; border-radius:7px; font-size:13px; cursor:pointer; }
+    .btn-save   { display:inline-flex; align-items:center; gap:6px; padding:8px 20px; background:linear-gradient(135deg,#28a745,#20c050); color:#fff; border:none; border-radius:7px; font-size:13px; font-weight:bold; cursor:pointer; }
 
     .card-list { display:none; }
     .card { background:#fff; border-radius:10px; padding:14px; margin-bottom:10px; box-shadow:0 2px 6px rgba(0,0,0,0.07); }
@@ -172,7 +170,7 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
     .card-label { color:#888; }
     .card-nv { margin-top:8px; background:#f0f4f8; border-radius:6px; padding:8px 12px; font-size:12px; line-height:1.8; }
     .card-actions { display:flex; gap:8px; margin-top:10px; }
-    .card-actions .btn-edit-row, .card-actions .btn-del-row { flex:1; text-align:center; padding:7px; font-size:12px; }
+    .card-actions .btn-edit-row, .card-actions .btn-del-row { flex:1; justify-content:center; padding:7px; font-size:12px; }
 
     @media (max-width:600px) {
       .table-wrapper { display:none; }
@@ -183,6 +181,7 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
   </style>
 </head>
 <body>
+
 <header>
   <h1>Admin Dashboard</h1>
   <div class="btn-group">
@@ -207,7 +206,10 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 <main>
 
   <?php if ($resultMsg): ?>
-    <div class="result-box result-<?= $resultType ?>" id="result-msg"><?= $resultMsg ?></div>
+    <div class="result-box result-<?= $resultType ?>" id="result-msg">
+      <i class="ti ti-circle-check"></i>
+      <span><?= $resultMsg ?></span>
+    </div>
     <script>
       setTimeout(() => {
         const m = document.getElementById('result-msg');
@@ -241,7 +243,7 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 
   <?php if (!empty($allTH)): ?>
   <div class="stat-section">
-    <h3>📊 Thống kê đăng ký theo tổ hợp</h3>
+    <h3><i class="ti ti-chart-bar"></i> Thống kê đăng ký theo tổ hợp</h3>
 
     <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:10px; font-size:12px; color:#888;">
       <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD;"></span>Nguyện vọng 1</span>
@@ -263,10 +265,7 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
       </thead>
       <tbody>
         <?php foreach ($allTH as $th): ?>
-          <?php
-            $n1 = $statsNV1[$th] ?? 0;
-            $n2 = $statsNV2[$th] ?? 0;
-          ?>
+          <?php $n1 = $statsNV1[$th] ?? 0; $n2 = $statsNV2[$th] ?? 0; ?>
           <tr>
             <td><?= htmlspecialchars($th) ?></td>
             <td style="text-align:center;"><span class="badge-nv1"><?= $n1 ?></span></td>
@@ -281,11 +280,15 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 
   <form method="GET" class="search-bar">
     <input type="text" name="search"
-           placeholder="🔍 Tìm theo họ tên, số báo danh hoặc lớp..."
+           placeholder="Tìm theo họ tên, số báo danh hoặc lớp..."
            value="<?= htmlspecialchars($search) ?>">
-    <button type="submit" class="btn-search">Tìm kiếm</button>
+    <button type="submit" class="btn-search">
+      <i class="ti ti-search"></i> Tìm kiếm
+    </button>
     <?php if ($search !== ''): ?>
-      <a href="dashboard.php" class="btn-reset">✖ Xóa bộ lọc</a>
+      <a href="dashboard.php" class="btn-reset">
+        <i class="ti ti-x"></i> Xóa bộ lọc
+      </a>
     <?php endif; ?>
   </form>
 
@@ -333,10 +336,12 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
                 '<?= addslashes($row['email']) ?>',
                 '<?= addslashes(htmlspecialchars($row['nguyen_vong_1'])) ?>',
                 '<?= addslashes(htmlspecialchars($row['nguyen_vong_2'])) ?>'
-              )">✏️</button>
+              )"><i class="ti ti-edit"></i></button>
               <a href="?delete_id=<?= $row['id'] ?><?= $search ? '&search='.urlencode($search) : '' ?>"
                  class="btn-del-row"
-                 onclick="return confirm('Xác nhận xoá học sinh <?= addslashes(htmlspecialchars($row['ho_ten'])) ?>?')">🗑️</a>
+                 onclick="return confirm('Xác nhận xoá học sinh <?= addslashes(htmlspecialchars($row['ho_ten'])) ?>?')">
+                <i class="ti ti-trash"></i>
+              </a>
             </td>
           </tr>
         <?php endwhile; ?>
@@ -369,9 +374,11 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
             '<?= addslashes($row['so_dien_thoai']) ?>','<?= addslashes($row['email']) ?>',
             '<?= addslashes(htmlspecialchars($row['nguyen_vong_1'])) ?>',
             '<?= addslashes(htmlspecialchars($row['nguyen_vong_2'])) ?>'
-          )">✏️ Sửa</button>
+          )"><i class="ti ti-edit"></i> Sửa</button>
           <a href="?delete_id=<?= $row['id'] ?>" class="btn-del-row"
-             onclick="return confirm('Xác nhận xoá?')">🗑️ Xóa</a>
+             onclick="return confirm('Xác nhận xoá?')">
+            <i class="ti ti-trash"></i> Xóa
+          </a>
         </div>
       </div>
     <?php endwhile; ?>
@@ -410,7 +417,9 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <div class="modal-header">
-      <h3 class="modal-title">✏️ Sửa thông tin học sinh</h3>
+      <h3 class="modal-title">
+        <i class="ti ti-edit"></i> Sửa thông tin học sinh
+      </h3>
       <button class="modal-close" onclick="closeEdit()">×</button>
     </div>
     <form method="POST">
@@ -451,8 +460,12 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
         <?php endforeach; ?>
       </select>
       <div class="modal-footer">
-        <button type="button" class="btn-cancel" onclick="closeEdit()">Huỷ</button>
-        <button type="submit" class="btn-save">💾 Lưu</button>
+        <button type="button" class="btn-cancel" onclick="closeEdit()">
+          <i class="ti ti-x"></i> Huỷ
+        </button>
+        <button type="submit" class="btn-save">
+          <i class="ti ti-device-floppy"></i> Lưu
+        </button>
       </div>
     </form>
   </div>
@@ -493,7 +506,7 @@ if (document.getElementById('nvChart')) {
 }
 
 function openEdit(id, ten, lop, sbd, sdt, email, nv1, nv2) {
-  document.getElementById('edit_id').value    = id;
+  document.getElementById('edit_id').value     = id;
   document.getElementById('edit_ho_ten').value = ten;
   document.getElementById('edit_lop').value    = lop;
   document.getElementById('edit_sbd').value    = sbd;
@@ -514,5 +527,6 @@ document.getElementById('editModal').addEventListener('click', function(e) {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEdit(); });
 </script>
+
 </body>
 </html>
