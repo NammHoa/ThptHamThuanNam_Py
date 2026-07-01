@@ -6,7 +6,7 @@ require __DIR__ . '/autoload.php';
 $ten_truong = "Trường THPT Hàm Thuận Nam";
 $nam_hoc    = "2025–2026";
 $logo_path  = "images/logo-thpt-cent.jpg";
-$favicon_path = "images/favicon.png";
+$favicon_path = "images/favicon.ico";
 
 $now = new DateTime();
 
@@ -36,7 +36,7 @@ while ($r = $res->fetch_assoc()) {
 <head>
   <meta charset="UTF-8">
   <title>Đăng ký nguyện vọng lớp 10 – <?= $ten_truong ?></title>
-  <link rel="icon" href="<?= $favicon_path ?>">
+  <link rel="icon" type="image/x-icon" href="<?= $favicon_path ?>">
   <link rel="stylesheet" href="style.css?v=10">
   <style>
     .expired-card {
@@ -85,18 +85,30 @@ while ($r = $res->fetch_assoc()) {
       <h1>
         ĐĂNG KÝ NGUYỆN VỌNG TUYỂN SINH LỚP 10<br>
         TRƯỜNG THPT HÀM THUẬN NAM<br>
-        NĂM HỌC: 2025 - 2026
+        NĂM HỌC: 2026 - 2027
       </h1>
     </div>
   </header>
 
   <main>
-    <?php if ($success): ?>
-      <div class="alert alert-success"><?= $success ?></div>
-    <?php endif; ?>
-    <?php if ($error): ?>
-      <div class="alert alert-error show"><?= $error ?></div>
-    <?php endif; ?>
+<?php if ($success): ?>
+  <div class="alert alert-success" id="alert-success"><?= $success ?></div>
+  <script>
+    setTimeout(() => {
+      const a = document.getElementById('alert-success');
+      if (a) { a.style.transition='opacity 0.5s'; a.style.opacity='0'; setTimeout(()=>a.style.display='none',500); }
+    }, 3000);
+  </script>
+<?php endif; ?>
+<?php if ($error): ?>
+  <div class="alert alert-error show" id="alert-error"><?= $error ?></div>
+  <script>
+    setTimeout(() => {
+      const a = document.getElementById('alert-error');
+      if (a) { a.style.transition='opacity 0.5s'; a.style.opacity='0'; setTimeout(()=>a.style.display='none',500); }
+    }, 3000);
+  </script>
+<?php endif; ?>
 
     <?php if (!$deadline): ?>
       <div class="alert" style="background:#f8d7da;color:#721c24;max-width:520px;margin:40px auto;">

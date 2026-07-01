@@ -135,16 +135,71 @@ if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
         $mail->isHTML(true);
         $mail->Subject = "Xác nhận đăng ký nguyện vọng lớp 10";
-        $mail->Body    = "
-        <html><body>
-          <h3>Xin chào {$ho_ten},</h3>
-          <p>Bạn đã đăng ký nguyện vọng thành công:</p>
-          <ul>
-            <li><strong>NV1:</strong> {$label1}</li>
-            <li><strong>NV2:</strong> {$label2}</li>
-          </ul>
-          <p>Trân trọng,<br>Trường THPT Hàm Thuận Nam</p>
-        </body></html>";
+        $mail->Subject = "✅ Xác nhận đăng ký nguyện vọng lớp 10 – " . $ho_ten;
+$mail->Body    = "
+<!DOCTYPE html>
+<html lang='vi'>
+<head><meta charset='UTF-8'></head>
+<body style='margin:0;padding:0;background:#f0f4f8;font-family:Arial,sans-serif;'>
+  <table width='100%' cellpadding='0' cellspacing='0' style='background:#f0f4f8;padding:30px 0;'>
+    <tr><td align='center'>
+      <table width='560' cellpadding='0' cellspacing='0' style='background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);'>
+        
+        <!-- HEADER -->
+        <tr>
+          <td style='background:linear-gradient(135deg,#003366,#004080,#0066cc);padding:28px 32px;text-align:center;'>
+            <h1 style='color:#fff;margin:0 0 6px;font-size:20px;letter-spacing:1px;'>TRƯỜNG THPT HÀM THUẬN NAM</h1>
+            <p style='color:rgba(255,255,255,0.8);margin:0;font-size:13px;'>Xác nhận đăng ký nguyện vọng lớp 10</p>
+          </td>
+        </tr>
+
+        <!-- BODY -->
+        <tr>
+          <td style='padding:28px 32px;'>
+            <p style='color:#333;font-size:15px;margin:0 0 16px;'>Xin chào <strong style='color:#004080;'>{$ho_ten}</strong>,</p>
+            <p style='color:#555;font-size:14px;margin:0 0 20px;line-height:1.7;'>Bạn đã đăng ký nguyện vọng tuyển sinh lớp 10 thành công. Dưới đây là thông tin của bạn:</p>
+
+            <!-- INFO TABLE -->
+            <table width='100%' cellpadding='0' cellspacing='0' style='border-radius:8px;overflow:hidden;border:1px solid #e0e8f0;margin-bottom:20px;'>
+              <tr style='background:#f0f4f8;'>
+                <td style='padding:10px 14px;font-size:13px;color:#888;font-weight:bold;width:140px;'>Họ và tên</td>
+                <td style='padding:10px 14px;font-size:14px;color:#333;font-weight:500;'>{$ho_ten}</td>
+              </tr>
+              <tr style='background:#fff;'>
+                <td style='padding:10px 14px;font-size:13px;color:#888;font-weight:bold;'>Lớp</td>
+                <td style='padding:10px 14px;font-size:14px;color:#333;'>{$lop}</td>
+              </tr>
+              <tr style='background:#f0f4f8;'>
+                <td style='padding:10px 14px;font-size:13px;color:#888;font-weight:bold;'>Số báo danh</td>
+                <td style='padding:10px 14px;font-size:14px;color:#333;font-weight:bold;'>{$so_bao_danh}</td>
+              </tr>
+              <tr style='background:#fff;'>
+                <td style='padding:10px 14px;font-size:13px;color:#888;font-weight:bold;'>Nguyện vọng 1</td>
+                <td style='padding:10px 14px;font-size:14px;color:#1565c0;font-weight:500;'>{$label1}</td>
+              </tr>
+              <tr style='background:#f0f4f8;'>
+                <td style='padding:10px 14px;font-size:13px;color:#888;font-weight:bold;'>Nguyện vọng 2</td>
+                <td style='padding:10px 14px;font-size:14px;color:#1b7a5a;font-weight:500;'>{$label2}</td>
+              </tr>
+            </table>
+
+            <p style='color:#555;font-size:13px;line-height:1.7;margin:0;'>Nếu có thắc mắc, vui lòng liên hệ nhà trường.<br>Trân trọng,<br><strong>Trường THPT Hàm Thuận Nam</strong></p>
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td style='background:#f8f9fa;padding:16px 32px;text-align:center;border-top:1px solid #e0e0e0;'>
+            <p style='color:#aaa;font-size:12px;margin:0;'>📍 18 Trần Phú, Xã Hàm Thuận Nam, Tỉnh Lâm Đồng</p>
+            <p style='color:#aaa;font-size:12px;margin:4px 0 0;'>📞 02523867255 &nbsp;|&nbsp; 📧 c3hamthuannam.binhthuan@moet.edu.vn</p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>";
 
         $mail->send();
     } catch (Exception $e) {
@@ -152,9 +207,14 @@ if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
     }
 }
 
-
 // 12. Thông báo thành công và redirect
-$_SESSION['success'] = "✅ Đăng ký thành công! SBD: {$so_bao_danh}";
-header("Location: ../index.php");
+$_SESSION['dang_ky_thanh_cong'] = [
+    'ho_ten' => $ho_ten,
+    'lop'    => $lop,
+    'sbd'    => $so_bao_danh,
+    'nv1'    => $label1,
+    'nv2'    => $label2,
+];
+header("Location: ../success.php");
 exit;
 ?>
