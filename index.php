@@ -61,15 +61,9 @@ while ($r = $res->fetch_assoc()) {
     .expired-icon i { font-size: 52px; color: #fff; }
     .expired-title { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px; }
     .expired-time  { font-size: 13px; color: rgba(255,255,255,0.75); }
+    .expired-bottom { padding: 24px 28px; text-align: center; }
+    .expired-msg { font-size: 14px; color: #555; line-height: 1.8; }
 
-    .expired-bottom {
-      padding: 24px 28px; text-align: center;
-    }
-    .expired-msg {
-      font-size: 14px; color: #555; line-height: 1.8;
-    }
-
-    /* Nút tra cứu */
     .tc-link {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 11px 32px;
@@ -133,9 +127,7 @@ while ($r = $res->fetch_assoc()) {
     <?php elseif ($now > $deadline): ?>
       <div class="expired-card">
         <div class="expired-top">
-          <span class="expired-icon">
-            <i class="ti ti-lock"></i>
-          </span>
+          <span class="expired-icon"><i class="ti ti-lock"></i></span>
           <div class="expired-title">Đã hết hạn đăng ký</div>
           <div class="expired-time">Kết thúc lúc: <?= $deadline->format('H:i – d/m/Y') ?></div>
         </div>
@@ -170,7 +162,7 @@ while ($r = $res->fetch_assoc()) {
           <input type="text" name="so_bao_danh">
 
           <label>Số điện thoại phụ huynh: <span style="color:red;">*</span></label>
-          <input type="text" name="so_dien_thoai">
+          <input type="text" name="so_dien_thoai" maxlength="10">
 
           <label>Email: <span style="color:red;">*</span></label>
           <input type="email" name="email">
@@ -209,60 +201,60 @@ while ($r = $res->fetch_assoc()) {
 
   </main>
 
-<footer>
-  <div class="footer-accent"></div>
-  <div class="footer-body">
+  <footer>
+    <div class="footer-accent"></div>
+    <div class="footer-body">
 
-    <div class="footer-brand">
-      <img src="<?= $logo_path ?>" alt="Logo">
-      <div class="footer-brand-text">
-        <h3>TRƯỜNG THPT<br>HÀM THUẬN NAM</h3>
-        <p>Môi trường giáo dục xanh – sạch – đẹp – an toàn</p>
+      <div class="footer-brand">
+        <img src="<?= $logo_path ?>" alt="Logo">
+        <div class="footer-brand-text">
+          <h3>TRƯỜNG THPT<br>HÀM THUẬN NAM</h3>
+          <p>Môi trường giáo dục xanh – sạch – đẹp – an toàn</p>
+        </div>
       </div>
+
+      <div class="footer-info">
+        <div class="footer-info-item">
+          <i class="ti ti-map-pin"></i>
+          <span>18 Trần Phú, Xã Hàm Thuận Nam, Tỉnh Lâm Đồng</span>
+        </div>
+        <div class="footer-info-item">
+          <i class="ti ti-phone"></i>
+          <span>02523867255</span>
+        </div>
+        <div class="footer-info-item">
+          <i class="ti ti-mail"></i>
+          <a href="mailto:c3hamthuannam.binhthuan@moet.edu.vn">c3hamthuannam.binhthuan@moet.edu.vn</a>
+        </div>
+        <div class="footer-info-item">
+          <i class="ti ti-world"></i>
+          <a href="http://thpthamthuannam.edu.vn" target="_blank">thpthamthuannam.edu.vn</a>
+        </div>
+      </div>
+
+      <div class="footer-fb">
+        <div class="fb-page"
+          data-href="https://www.facebook.com/truongthpthamthuannam"
+          data-tabs="timeline"
+          data-width="260"
+          data-height="200"
+          data-small-header="true"
+          data-adapt-container-width="false"
+          data-hide-cover="false"
+          data-show-facepile="false">
+        </div>
+      </div>
+
     </div>
-
-    <div class="footer-info">
-      <div class="footer-info-item">
-        <i class="ti ti-map-pin"></i>
-        <span>18 Trần Phú, Xã Hàm Thuận Nam, Tỉnh Lâm Đồng</span>
-      </div>
-      <div class="footer-info-item">
-        <i class="ti ti-phone"></i>
-        <span>02523867255</span>
-      </div>
-      <div class="footer-info-item">
-        <i class="ti ti-mail"></i>
-        <a href="mailto:c3hamthuannam.binhthuan@moet.edu.vn">c3hamthuannam.binhthuan@moet.edu.vn</a>
-      </div>
-      <div class="footer-info-item">
-        <i class="ti ti-world"></i>
-        <a href="http://thpthamthuannam.edu.vn" target="_blank">thpthamthuannam.edu.vn</a>
-      </div>
+    <div class="footer-bottom">
+      <span>© <?= date('Y') ?> Trường THPT Hàm Thuận Nam. Thiết kế bởi <strong>Thầy Huỳnh Minh Châu</strong></span>
     </div>
+  </footer>
 
-    <div class="footer-fb">
-      <div class="fb-page"
-        data-href="https://www.facebook.com/truongthpthamthuannam"
-        data-tabs="timeline"
-        data-width="260"
-        data-height="200"
-        data-small-header="true"
-        data-adapt-container-width="false"
-        data-hide-cover="false"
-        data-show-facepile="false">
-      </div>
-    </div>
-
-  </div>
-  <div class="footer-bottom">
-    <span>© <?= date('Y') ?> Trường THPT Hàm Thuận Nam. Thiết kế bởi <strong>Thầy Huỳnh Minh Châu</strong></span>
-  </div>
-</footer>
-
-<div id="fb-root"></div>
-<script async defer crossorigin="anonymous"
-  src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v19.0">
-</script>
+  <div id="fb-root"></div>
+  <script async defer crossorigin="anonymous"
+    src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v19.0">
+  </script>
 
   <?php if ($deadline && $now < $deadline): ?>
   <script>
@@ -300,10 +292,9 @@ while ($r = $res->fetch_assoc()) {
 
     function validateForm() {
       const fields = [
-        { name: 'ho_ten',        label: 'Họ và tên học sinh' },
-        { name: 'lop',           label: 'Lớp 9 hiện tại' },
-        { name: 'so_bao_danh',   label: 'Số báo danh' },
-        { name: 'so_dien_thoai', label: 'Số điện thoại phụ huynh' },
+        { name: 'ho_ten',      label: 'Họ và tên học sinh' },
+        { name: 'lop',         label: 'Lớp 9 hiện tại' },
+        { name: 'so_bao_danh', label: 'Số báo danh' },
       ];
       const errorBox = document.getElementById('form-error');
 
@@ -315,14 +306,25 @@ while ($r = $res->fetch_assoc()) {
         }
       }
 
+      const sdtEl  = document.querySelector('input[name="so_dien_thoai"]');
+      const sdtVal = sdtEl ? sdtEl.value.trim() : '';
+      if (!sdtVal) {
+        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> Vui lòng nhập <strong>Số điện thoại phụ huynh</strong>.');
+        sdtEl && sdtEl.focus(); return false;
+      }
+      if (!/^(03|05|07|08|09)\d{8}$/.test(sdtVal)) {
+        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Số điện thoại</strong> không hợp lệ.');
+        sdtEl && sdtEl.focus(); return false;
+      }
+
       const emailEl  = document.querySelector('input[name="email"]');
       const emailVal = emailEl ? emailEl.value.trim() : '';
       if (!emailVal) {
         showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> Vui lòng nhập <strong>Email</strong>.');
         emailEl && emailEl.focus(); return false;
       }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Email</strong> không hợp lệ. Ví dụ: ten@gmail.com');
+      if (!/^[^\s@]+@gmail\.com$/.test(emailVal)) {
+        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Email</strong> phải có đuôi @gmail.com. Ví dụ: ten@gmail.com');
         emailEl && emailEl.focus(); return false;
       }
 
@@ -344,7 +346,7 @@ while ($r = $res->fetch_assoc()) {
     function showError(box, msg) {
       box.innerHTML = msg;
       box.classList.add('show');
-      setTimeout(() => box.classList.remove('show'), 3000);
+      setTimeout(() => box.classList.remove('show'), 4000);
     }
   </script>
 
@@ -376,5 +378,6 @@ while ($r = $res->fetch_assoc()) {
     });
   })();
   </script>
+
 </body>
 </html>

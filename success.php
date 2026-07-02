@@ -18,7 +18,7 @@ $nv1    = $data['nv1'];
 $nv2    = $data['nv2'];
 
 $ten_truong   = "Trường THPT Hàm Thuận Nam";
-$nam_hoc      = "2025–2026";
+$nam_hoc      = "2026–2027";
 $logo_path    = "images/logo-thpt-cent.jpg";
 $favicon_path = "images/favicon.png";
 ?>
@@ -29,7 +29,7 @@ $favicon_path = "images/favicon.png";
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng ký thành công – <?= $ten_truong ?></title>
   <link rel="icon" href="<?= $favicon_path ?>">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
   <style>
     .sc-wrap {
@@ -219,21 +219,59 @@ $favicon_path = "images/favicon.png";
 </main>
 
 <footer>
-  <div class="footer-main">
+  <div class="footer-accent"></div>
+  <div class="footer-body">
+
     <div class="footer-brand">
       <img src="<?= $logo_path ?>" alt="Logo">
-      <h3>TRƯỜNG THPT<br>HÀM THUẬN NAM</h3>
+      <div class="footer-brand-text">
+        <h3>TRƯỜNG THPT<br>HÀM THUẬN NAM</h3>
+        <p>Môi trường giáo dục xanh – sạch – đẹp – an toàn</p>
+      </div>
     </div>
+
     <div class="footer-info">
-      <p>📍 18 Trần Phú, Xã Hàm Thuận Nam, Tỉnh Lâm Đồng</p>
-      <p>📞 02523867255 &nbsp;|&nbsp; 📧 <a href="mailto:c3hamthuannam.binhthuan@moet.edu.vn">c3hamthuannam.binhthuan@moet.edu.vn</a></p>
-      <p>🌐 <a href="http://thpthamthuannam.edu.vn" target="_blank">thpthamthuannam.edu.vn</a> &nbsp;|&nbsp; 📘 <a href="https://www.facebook.com/truongthpthamthuannam" target="_blank">facebook.com/truongthpthamthuannam</a></p>
+      <div class="footer-info-item">
+        <i class="ti ti-map-pin"></i>
+        <span>18 Trần Phú, Xã Hàm Thuận Nam, Tỉnh Lâm Đồng</span>
+      </div>
+      <div class="footer-info-item">
+        <i class="ti ti-phone"></i>
+        <span>02523867255</span>
+      </div>
+      <div class="footer-info-item">
+        <i class="ti ti-mail"></i>
+        <a href="mailto:c3hamthuannam.binhthuan@moet.edu.vn">c3hamthuannam.binhthuan@moet.edu.vn</a>
+      </div>
+      <div class="footer-info-item">
+        <i class="ti ti-world"></i>
+        <a href="http://thpthamthuannam.edu.vn" target="_blank">thpthamthuannam.edu.vn</a>
+      </div>
     </div>
+
+    <div class="footer-fb">
+      <div class="fb-page"
+        data-href="https://www.facebook.com/truongthpthamthuannam"
+        data-tabs="timeline"
+        data-width="260"
+        data-height="200"
+        data-small-header="true"
+        data-adapt-container-width="false"
+        data-hide-cover="false"
+        data-show-facepile="false">
+      </div>
+    </div>
+
   </div>
   <div class="footer-bottom">
-    ✨ Sản phẩm được thiết kế bởi <strong>Thầy Huỳnh Minh Châu</strong>
+    <span>© <?= date('Y') ?> Trường THPT Hàm Thuận Nam. Thiết kế bởi <strong>Thầy Huỳnh Minh Châu</strong></span>
   </div>
 </footer>
+
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous"
+  src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v19.0">
+</script>
 
 <button id="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"
   style="display:none;position:fixed;bottom:24px;right:20px;z-index:999;
