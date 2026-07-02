@@ -180,11 +180,13 @@ $favicon_path = "images/favicon.png";
     <?php endif; ?>
   </div>
   <div class="header-inner">
-    <img src="<?= $logo_path ?>" alt="Logo trường THPT Hàm Thuận Nam">
+    <a href="index.php">
+      <img src="<?= $logo_path ?>" alt="Logo trường THPT Hàm Thuận Nam" style="cursor:pointer;">
+    </a>
     <h1>
       ĐĂNG KÝ NGUYỆN VỌNG TUYỂN SINH LỚP 10<br>
       TRƯỜNG THPT HÀM THUẬN NAM<br>
-      NĂM HỌC: 2025 - 2026
+      NĂM HỌC: 2026 - 2027
     </h1>
   </div>
 </header>

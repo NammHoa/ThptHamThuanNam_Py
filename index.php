@@ -89,7 +89,9 @@ while ($r = $res->fetch_assoc()) {
       <?php endif; ?>
     </div>
     <div class="header-inner">
-      <img src="<?= $logo_path ?>" alt="Logo trường THPT Hàm Thuận Nam">
+      <a href="index.php">
+        <img src="<?= $logo_path ?>" alt="Logo trường THPT Hàm Thuận Nam" style="cursor:pointer;">
+      </a>
       <h1>
         ĐĂNG KÝ NGUYỆN VỌNG TUYỂN SINH LỚP 10<br>
         TRƯỜNG THPT HÀM THUẬN NAM<br>

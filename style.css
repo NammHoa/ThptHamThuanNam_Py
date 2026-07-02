@@ -75,6 +75,11 @@ header {
   text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
   letter-spacing: 0.5px;
 }
+.header-inner a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
 
 main { padding-top: 20px; }
 
