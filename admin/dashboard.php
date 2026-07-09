@@ -54,6 +54,7 @@ $tongHS = $conn->query("SELECT COUNT(*) FROM hoc_sinh")->fetch_row()[0];
 $homNay = $conn->query("SELECT COUNT(*) FROM hoc_sinh WHERE DATE(ngay_dang_ky) = CURDATE()")->fetch_row()[0];
 $tongTT = $conn->query("SELECT COUNT(*) FROM danh_sach_trung_tuyen")->fetch_row()[0];
 $chuaDK = max(0, $tongTT - $tongHS);
+$phanTramDK = $tongTT > 0 ? round(($tongHS / $tongTT) * 100) : 0;
 
 $statsNV1 = [];
 $statsNV2 = [];
@@ -62,6 +63,24 @@ while ($row = $r->fetch_assoc()) $statsNV1[$row['nguyen_vong_1']] = $row['cnt'];
 $r = $conn->query("SELECT nguyen_vong_2, COUNT(*) as cnt FROM hoc_sinh GROUP BY nguyen_vong_2 ORDER BY cnt DESC");
 while ($row = $r->fetch_assoc()) $statsNV2[$row['nguyen_vong_2']] = $row['cnt'];
 $allTH = array_unique(array_merge(array_keys($statsNV1), array_keys($statsNV2)));
+
+$statsNgay = [];
+$r = $conn->query("
+    SELECT DATE(ngay_dang_ky) as ngay, COUNT(*) as cnt
+    FROM hoc_sinh
+    WHERE ngay_dang_ky >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+    GROUP BY DATE(ngay_dang_ky)
+    ORDER BY ngay ASC
+");
+while ($row = $r->fetch_assoc()) $statsNgay[$row['ngay']] = $row['cnt'];
+
+$ngayLabels = [];
+$ngayCounts = [];
+for ($i = 6; $i >= 0; $i--) {
+    $d = date('Y-m-d', strtotime("-$i days"));
+    $ngayLabels[] = date('d/m', strtotime($d));
+    $ngayCounts[] = $statsNgay[$d] ?? 0;
+}
 
 $search = trim($_GET['search'] ?? '');
 $page   = max(1, intval($_GET['page'] ?? 1));
@@ -106,6 +125,16 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 
     .stat-section { background:#fff; border-radius:10px; padding:20px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.07); }
     .stat-section h3 { color:#004080; margin:0 0 15px; font-size:16px; display:flex; align-items:center; gap:8px; }
+
+    .chart-grid { display:grid; grid-template-columns:1fr; gap:16px; margin-bottom:20px; }
+    .chart-card { background:#fff; border-radius:10px; padding:18px 20px; box-shadow:0 2px 8px rgba(0,0,0,0.07); }
+    .chart-card h3 { color:#004080; margin:0 0 14px; font-size:15px; display:flex; align-items:center; gap:8px; }
+
+    .progress-bar-wrap { margin-bottom:10px; }
+    .progress-bar-label { display:flex; justify-content:space-between; font-size:13px; color:#555; margin-bottom:5px; }
+    .progress-bar-track { background:#f0f0f0; border-radius:99px; height:10px; overflow:hidden; }
+    .progress-bar-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#004080,#0066cc); transition:width .8s ease; }
+    .progress-bar-fill.green { background:linear-gradient(90deg,#28a745,#20c050); }
 
     .search-bar { display:flex; gap:10px; align-items:center; background:#fff; border-radius:10px; padding:14px 18px; margin-bottom:15px; box-shadow:0 2px 8px rgba(0,0,0,0.07); flex-wrap:wrap; }
     .search-bar input { flex:1; min-width:200px; padding:9px 14px; border:1px solid #ccc; border-radius:8px; font-size:14px; }
@@ -185,21 +214,11 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 <header>
   <h1>Admin Dashboard</h1>
   <div class="btn-group">
-    <a href="import_trungtuyen.php" class="btn-header">
-      <i class="ti ti-upload"></i> Tải lên Excel
-    </a>
-    <a href="download.php" class="btn-header">
-      <i class="ti ti-download"></i> Tải danh sách
-    </a>
-    <a href="deadline.php" class="btn-header">
-      <i class="ti ti-clock"></i> Hạn đăng ký
-    </a>
-    <a href="tohop.php" class="btn-header">
-      <i class="ti ti-books"></i> Tổ hợp
-    </a>
-    <a href="logout.php" class="btn-header btn-header-danger">
-      <i class="ti ti-logout"></i> Đăng xuất
-    </a>
+    <a href="import_trungtuyen.php" class="btn-header"><i class="ti ti-upload"></i> Tải lên Excel</a>
+    <a href="download.php" class="btn-header"><i class="ti ti-download"></i> Tải danh sách</a>
+    <a href="deadline.php" class="btn-header"><i class="ti ti-clock"></i> Hạn đăng ký</a>
+    <a href="tohop.php" class="btn-header"><i class="ti ti-books"></i> Tổ hợp</a>
+    <a href="logout.php" class="btn-header btn-header-danger"><i class="ti ti-logout"></i> Đăng xuất</a>
   </div>
 </header>
 
@@ -236,24 +255,45 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
     </div>
     <div class="metric-card">
       <p class="label">Chưa đăng ký</p>
-      <p class="value"><?= $chuaDK ?></p>
+      <p class="value" style="color:#dc3545;"><?= $chuaDK ?></p>
       <p class="sub">học sinh còn lại</p>
     </div>
   </div>
 
+  <div class="stat-section">
+    <h3><i class="ti ti-activity"></i> Tiến độ đăng ký</h3>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-label">
+        <span>Đã đăng ký: <strong><?= $tongHS ?> / <?= $tongTT ?> học sinh</strong></span>
+        <span><strong><?= $phanTramDK ?>%</strong></span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill green" style="width:<?= $phanTramDK ?>%;"></div>
+      </div>
+    </div>
+    <div style="font-size:13px; color:#888; margin-top:6px;">
+      Còn <strong style="color:#dc3545;"><?= $chuaDK ?></strong> học sinh chưa đăng ký nguyện vọng.
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3><i class="ti ti-calendar-stats"></i> Đăng ký 7 ngày gần nhất</h3>
+      <div style="position:relative; height:200px;">
+        <canvas id="ngayChart"></canvas>
+      </div>
+    </div>
+
   <?php if (!empty($allTH)): ?>
   <div class="stat-section">
     <h3><i class="ti ti-chart-bar"></i> Thống kê đăng ký theo tổ hợp</h3>
-
     <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:10px; font-size:12px; color:#888;">
       <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD;"></span>Nguyện vọng 1</span>
       <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;"></span>Nguyện vọng 2</span>
     </div>
-
     <div style="position:relative; width:100%; height:260px; margin-bottom:20px;">
-      <canvas id="nvChart" role="img" aria-label="Biểu đồ thống kê nguyện vọng theo tổ hợp">Thống kê nguyện vọng.</canvas>
+      <canvas id="nvChart"></canvas>
     </div>
-
     <table class="stat-table">
       <thead>
         <tr>
@@ -264,8 +304,9 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
         </tr>
       </thead>
       <tbody>
-        <?php foreach ($allTH as $th): ?>
-          <?php $n1 = $statsNV1[$th] ?? 0; $n2 = $statsNV2[$th] ?? 0; ?>
+        <?php foreach ($allTH as $th):
+          $n1 = $statsNV1[$th] ?? 0;
+          $n2 = $statsNV2[$th] ?? 0; ?>
           <tr>
             <td><?= htmlspecialchars($th) ?></td>
             <td style="text-align:center;"><span class="badge-nv1"><?= $n1 ?></span></td>
@@ -384,11 +425,11 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
     <?php endwhile; ?>
   </div>
 
-  <?php if ($totalPages > 1): ?>
-    <?php $s = $search ? '&search='.urlencode($search) : ''; ?>
+  <?php if ($totalPages > 1):
+    $s = $search ? '&search='.urlencode($search) : ''; ?>
     <div class="pagination">
       <?php if ($page > 1): ?>
-        <a href="?page=1<?= $s ?>" title="Trang đầu">«</a>
+        <a href="?page=1<?= $s ?>">«</a>
         <a href="?page=<?= $page-1 ?><?= $s ?>">‹ Trước</a>
       <?php else: ?>
         <span class="disabled">«</span>
@@ -403,7 +444,7 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
       <?php endfor; ?>
       <?php if ($page < $totalPages): ?>
         <a href="?page=<?= $page+1 ?><?= $s ?>">Sau ›</a>
-        <a href="?page=<?= $totalPages ?><?= $s ?>" title="Trang cuối">»</a>
+        <a href="?page=<?= $totalPages ?><?= $s ?>">»</a>
       <?php else: ?>
         <span class="disabled">Sau ›</span>
         <span class="disabled">»</span>
@@ -417,33 +458,19 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <div class="modal-header">
-      <h3 class="modal-title">
-        <i class="ti ti-edit"></i> Sửa thông tin học sinh
-      </h3>
+      <h3 class="modal-title"><i class="ti ti-edit"></i> Sửa thông tin học sinh</h3>
       <button class="modal-close" onclick="closeEdit()">×</button>
     </div>
     <form method="POST">
       <input type="hidden" name="action" value="edit">
       <input type="hidden" name="edit_id" id="edit_id">
       <div class="modal-row">
-        <div>
-          <label>Họ và tên:</label>
-          <input type="text" name="edit_ho_ten" id="edit_ho_ten" required>
-        </div>
-        <div>
-          <label>Lớp:</label>
-          <input type="text" name="edit_lop" id="edit_lop">
-        </div>
+        <div><label>Họ và tên:</label><input type="text" name="edit_ho_ten" id="edit_ho_ten" required></div>
+        <div><label>Lớp:</label><input type="text" name="edit_lop" id="edit_lop"></div>
       </div>
       <div class="modal-row">
-        <div>
-          <label>Số báo danh:</label>
-          <input type="text" name="edit_sbd" id="edit_sbd" required>
-        </div>
-        <div>
-          <label>Số điện thoại:</label>
-          <input type="text" name="edit_sdt" id="edit_sdt">
-        </div>
+        <div><label>Số báo danh:</label><input type="text" name="edit_sbd" id="edit_sbd" required></div>
+        <div><label>Số điện thoại:</label><input type="text" name="edit_sdt" id="edit_sdt"></div>
       </div>
       <label>Email:</label>
       <input type="email" name="edit_email" id="edit_email">
@@ -460,12 +487,8 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
         <?php endforeach; ?>
       </select>
       <div class="modal-footer">
-        <button type="button" class="btn-cancel" onclick="closeEdit()">
-          <i class="ti ti-x"></i> Huỷ
-        </button>
-        <button type="submit" class="btn-save">
-          <i class="ti ti-device-floppy"></i> Lưu
-        </button>
+        <button type="button" class="btn-cancel" onclick="closeEdit()"><i class="ti ti-x"></i> Huỷ</button>
+        <button type="submit" class="btn-save"><i class="ti ti-device-floppy"></i> Lưu</button>
       </div>
     </form>
   </div>
@@ -474,13 +497,17 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 <script>
 <?php
 $labelsJS = json_encode(array_values($allTH));
-$nv1JS    = json_encode(array_values(array_map(fn($th) => $statsNV1[$th] ?? 0, $allTH)));
-$nv2JS    = json_encode(array_values(array_map(fn($th) => $statsNV2[$th] ?? 0, $allTH)));
+$shortLabels = array_map(fn($th, $i) => 'TH'.($i+1), $allTH, array_keys($allTH));
+$shortLabelsJS = json_encode(array_values($shortLabels));
+$nv1JS = json_encode(array_values(array_map(fn($th) => $statsNV1[$th] ?? 0, $allTH)));
+$nv2JS = json_encode(array_values(array_map(fn($th) => $statsNV2[$th] ?? 0, $allTH)));
 ?>
-const labels = <?= $labelsJS ?>;
-const shortLabels = labels.map((l, i) => 'TH' + (i+1));
-const nv1Data = <?= $nv1JS ?>;
-const nv2Data = <?= $nv2JS ?>;
+const labels      = <?= $labelsJS ?>;
+const shortLabels = <?= $shortLabelsJS ?>;
+const nv1Data     = <?= $nv1JS ?>;
+const nv2Data     = <?= $nv2JS ?>;
+const ngayLabels  = <?= json_encode(array_values($ngayLabels)) ?>;
+const ngayCounts  = <?= json_encode(array_values($ngayCounts)) ?>;
 
 if (document.getElementById('nvChart')) {
   new Chart(document.getElementById('nvChart'), {
@@ -500,6 +527,34 @@ if (document.getElementById('nvChart')) {
       scales: {
         x: { grid: { display: false }, ticks: { color: '#888' } },
         y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#888', stepSize: 1, precision: 0 } }
+      }
+    }
+  });
+}
+
+if (document.getElementById('ngayChart')) {
+  new Chart(document.getElementById('ngayChart'), {
+    type: 'line',
+    data: {
+      labels: ngayLabels,
+      datasets: [{
+        label: 'Số đăng ký',
+        data: ngayCounts,
+        borderColor: '#004080',
+        backgroundColor: 'rgba(0,64,128,0.08)',
+        borderWidth: 2,
+        pointBackgroundColor: '#004080',
+        pointRadius: 4,
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888', font: { size: 12 } } },
+        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#888', stepSize: 1, precision: 0 }, beginAtZero: true }
       }
     }
   });
