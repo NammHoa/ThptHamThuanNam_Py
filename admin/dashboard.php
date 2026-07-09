@@ -80,7 +80,6 @@ for ($i = 6; $i >= 0; $i--) {
     $ngayCounts[] = $statsNgay[$d] ?? 0;
 }
 
-// ── Danh sách học sinh + sort ──
 $search  = trim($_GET['search']  ?? '');
 $page    = max(1, intval($_GET['page'] ?? 1));
 $limit   = 20;
@@ -110,7 +109,6 @@ if ($sortBy === 'ho_ten') {
     $stmt->execute();
     $allRows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-    // Sort theo tên (từ cuối) bằng PHP với locale tiếng Việt
     usort($allRows, function($a, $b) use ($sortDir) {
         $tenA = mb_strtolower(trim(strrchr(trim($a['ho_ten']), ' ')), 'UTF-8') ?: mb_strtolower($a['ho_ten'], 'UTF-8');
         $tenB = mb_strtolower(trim(strrchr(trim($b['ho_ten']), ' ')), 'UTF-8') ?: mb_strtolower($b['ho_ten'], 'UTF-8');
@@ -275,20 +273,6 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 </header>
 
 <main>
-
-  <?php if ($resultMsg): ?>
-    <div class="result-box result-<?= $resultType ?>" id="result-msg">
-      <i class="ti ti-circle-check"></i>
-      <span><?= $resultMsg ?></span>
-    </div>
-    <script>
-      setTimeout(() => {
-        const m = document.getElementById('result-msg');
-        if (m) { m.style.transition='opacity 0.5s'; m.style.opacity='0'; setTimeout(()=>m.style.display='none',500); }
-      }, 3000);
-    </script>
-  <?php endif; ?>
-
   <div class="metric-grid">
     <div class="metric-card">
       <p class="label">Tổng đăng ký</p>
@@ -533,14 +517,45 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
   <?php endif; ?>
 
 </main>
-
+<?php if ($resultMsg): ?>
+<div id="result-msg" style="
+  position:fixed; top:20px; right:20px; z-index:9999;
+  display:flex; align-items:center; gap:10px;
+  padding:14px 20px; border-radius:10px;
+  font-size:14px; font-weight:500;
+  box-shadow:0 4px 16px rgba(0,0,0,0.15);
+  background:#d4edda; color:#155724;
+  border-left:4px solid #28a745;
+  min-width:280px;
+  animation:slideInRight 0.3s ease;
+">
+  <i class="ti ti-circle-check" style="font-size:20px;color:#28a745;"></i>
+  <span><?= htmlspecialchars($resultMsg) ?></span>
+</div>
+<style>
+  @keyframes slideInRight {
+    from { opacity:0; transform:translateX(60px); }
+    to   { opacity:1; transform:translateX(0); }
+  }
+</style>
+<?php endif; ?>
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <div class="modal-header">
       <h3 class="modal-title"><i class="ti ti-edit"></i> Sửa thông tin học sinh</h3>
       <button class="modal-close" onclick="closeEdit()">×</button>
     </div>
-    <form method="POST">
+    <form method="POST" onsubmit="return validateEdit()">
+      <div id="edit-error" style="
+        display:none;
+        background:#fef2f2;
+        border-left:3px solid #dc3545;
+        color:#991b1b;
+        padding:10px 14px;
+        border-radius:6px;
+        font-size:13px;
+        margin-bottom:12px;
+      "></div>
       <input type="hidden" name="action" value="edit">
       <input type="hidden" name="edit_id" id="edit_id">
       <div class="modal-row">
@@ -637,7 +652,54 @@ if (document.getElementById('ngayChart')) {
     }
   });
 }
+function validateEdit() {
+  const errorBox = document.getElementById('edit-error');
+  errorBox.style.display = 'none';
+  errorBox.textContent   = '';
 
+  const ten   = document.getElementById('edit_ho_ten').value.trim();
+  const lop   = document.getElementById('edit_lop').value.trim();
+  const sbd   = document.getElementById('edit_sbd').value.trim();
+  const sdt   = document.getElementById('edit_sdt').value.trim();
+  const email = document.getElementById('edit_email').value.trim();
+  const nv1   = document.getElementById('edit_nv1').value;
+  const nv2   = document.getElementById('edit_nv2').value;
+
+  if (!ten)   return showEditError('Vui lòng nhập họ và tên.');
+  if (!lop)   return showEditError('Vui lòng nhập lớp.');
+  if (!sbd)   return showEditError('Vui lòng nhập số báo danh.');
+
+  if (!sdt) return showEditError('Vui lòng nhập số điện thoại.');
+  if (!/^(03|05|07|08|09)\d{8}$/.test(sdt))
+    return showEditError('Số điện thoại không hợp lệ.');
+
+  if (!email) return showEditError('Vui lòng nhập email.');
+  if (!/^[^\s@]+@gmail\.com$/.test(email))
+    return showEditError('Email phải có đuôi @gmail.com');
+
+  if (!nv1) return showEditError('Vui lòng chọn nguyện vọng 1.');
+  if (!nv2) return showEditError('Vui lòng chọn nguyện vọng 2.');
+  if (nv1 === nv2) return showEditError('Nguyện vọng 1 và 2 không được trùng nhau.');
+
+  return true;
+}
+
+function showEditError(msg) {
+  const errorBox = document.getElementById('edit-error');
+  errorBox.textContent   = '⚠ ' + msg;
+  errorBox.style.display = 'block';
+
+  setTimeout(() => {
+    errorBox.style.transition = 'opacity 0.5s';
+    errorBox.style.opacity    = '0';
+    setTimeout(() => {
+      errorBox.style.display  = 'none';
+      errorBox.style.opacity  = '1';
+    }, 500);
+  }, 3000);
+
+  return false;
+}
 function openEdit(id, ten, lop, sbd, sdt, email, nv1, nv2) {
   document.getElementById('edit_id').value     = id;
   document.getElementById('edit_ho_ten').value = ten;
@@ -659,6 +721,21 @@ document.getElementById('editModal').addEventListener('click', function(e) {
   if (e.target === this) closeEdit();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEdit(); });
+
+<?php if ($resultMsg): ?>
+(function() {
+  var m = document.getElementById('result-msg');
+  if (!m) return;
+  window.setTimeout(function() {
+    m.style.transition = 'opacity 0.5s, transform 0.5s';
+    m.style.opacity    = '0';
+    m.style.transform  = 'translateX(60px)';
+    window.setTimeout(function() {
+      if (m.parentNode) m.parentNode.removeChild(m);
+    }, 500);
+  }, 3000);
+})();
+<?php endif; ?>
 </script>
 
 </body>
