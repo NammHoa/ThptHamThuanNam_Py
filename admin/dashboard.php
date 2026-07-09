@@ -50,10 +50,10 @@ if (isset($_SESSION['dash_msg'])) {
     if ($m === 'edited')  { $resultMsg = "Đã cập nhật thông tin thành công."; $resultType = 'success'; }
 }
 
-$tongHS = $conn->query("SELECT COUNT(*) FROM hoc_sinh")->fetch_row()[0];
-$homNay = $conn->query("SELECT COUNT(*) FROM hoc_sinh WHERE DATE(ngay_dang_ky) = CURDATE()")->fetch_row()[0];
-$tongTT = $conn->query("SELECT COUNT(*) FROM danh_sach_trung_tuyen")->fetch_row()[0];
-$chuaDK = max(0, $tongTT - $tongHS);
+$tongHS     = $conn->query("SELECT COUNT(*) FROM hoc_sinh")->fetch_row()[0];
+$homNay     = $conn->query("SELECT COUNT(*) FROM hoc_sinh WHERE DATE(ngay_dang_ky) = CURDATE()")->fetch_row()[0];
+$tongTT     = $conn->query("SELECT COUNT(*) FROM danh_sach_trung_tuyen")->fetch_row()[0];
+$chuaDK     = max(0, $tongTT - $tongHS);
 $phanTramDK = $tongTT > 0 ? round(($tongHS / $tongTT) * 100) : 0;
 
 $statsNV1 = [];
@@ -69,11 +69,9 @@ $r = $conn->query("
     SELECT DATE(ngay_dang_ky) as ngay, COUNT(*) as cnt
     FROM hoc_sinh
     WHERE ngay_dang_ky >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
-    GROUP BY DATE(ngay_dang_ky)
-    ORDER BY ngay ASC
+    GROUP BY DATE(ngay_dang_ky) ORDER BY ngay ASC
 ");
 while ($row = $r->fetch_assoc()) $statsNgay[$row['ngay']] = $row['cnt'];
-
 $ngayLabels = [];
 $ngayCounts = [];
 for ($i = 6; $i >= 0; $i--) {
@@ -82,26 +80,78 @@ for ($i = 6; $i >= 0; $i--) {
     $ngayCounts[] = $statsNgay[$d] ?? 0;
 }
 
-$search = trim($_GET['search'] ?? '');
-$page   = max(1, intval($_GET['page'] ?? 1));
-$limit  = 20;
-$offset = ($page - 1) * $limit;
+// ── Danh sách học sinh + sort ──
+$search  = trim($_GET['search']  ?? '');
+$page    = max(1, intval($_GET['page'] ?? 1));
+$limit   = 20;
+$offset  = ($page - 1) * $limit;
 
-if ($search !== '') {
-    $like = "%$search%";
-    $r = $conn->prepare("SELECT COUNT(*) FROM hoc_sinh WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? OR lop LIKE ?");
-    $r->bind_param("sss", $like, $like, $like); $r->execute(); $r->bind_result($total); $r->fetch(); $r->close();
-    $list = $conn->prepare("SELECT * FROM hoc_sinh WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? OR lop LIKE ? ORDER BY ngay_dang_ky DESC LIMIT ? OFFSET ?");
-    $list->bind_param("sssii", $like, $like, $like, $limit, $offset);
+$sortAllowed = ['lop', 'ho_ten', 'so_bao_danh'];
+$sortBy  = in_array($_GET['sort_by'] ?? '', $sortAllowed) ? $_GET['sort_by'] : 'lop';
+$sortDir = 'ASC';
+$orderSQL = match($sortBy) {
+    'lop' => "lop $sortDir, CONVERT(SUBSTRING_INDEX(ho_ten, ' ', -1) USING utf8mb4) COLLATE utf8mb4_unicode_ci ASC",
+    'ho_ten' => "CONVERT(SUBSTRING_INDEX(ho_ten, ' ', -1) USING utf8mb4) COLLATE utf8mb4_unicode_ci $sortDir, CONVERT(ho_ten USING utf8mb4) COLLATE utf8mb4_unicode_ci $sortDir",
+    default => "$sortBy $sortDir",
+};
+
+if ($sortBy === 'ho_ten') {
+    if ($search !== '') {
+        $like = "%$search%";
+        $r = $conn->prepare("SELECT COUNT(*) FROM hoc_sinh WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? OR lop LIKE ?");
+        $r->bind_param("sss", $like, $like, $like); $r->execute(); $r->bind_result($total); $r->fetch(); $r->close();
+        $stmt = $conn->prepare("SELECT * FROM hoc_sinh WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? OR lop LIKE ?");
+        $stmt->bind_param("sss", $like, $like, $like);
+    } else {
+        $r = $conn->query("SELECT COUNT(*) FROM hoc_sinh");
+        $total = $r->fetch_row()[0];
+        $stmt = $conn->prepare("SELECT * FROM hoc_sinh");
+    }
+    $stmt->execute();
+    $allRows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+    // Sort theo tên (từ cuối) bằng PHP với locale tiếng Việt
+    usort($allRows, function($a, $b) use ($sortDir) {
+        $tenA = mb_strtolower(trim(strrchr(trim($a['ho_ten']), ' ')), 'UTF-8') ?: mb_strtolower($a['ho_ten'], 'UTF-8');
+        $tenB = mb_strtolower(trim(strrchr(trim($b['ho_ten']), ' ')), 'UTF-8') ?: mb_strtolower($b['ho_ten'], 'UTF-8');
+        $cmp  = strcmp($tenA, $tenB);
+        if ($cmp === 0) $cmp = strcmp(mb_strtolower($a['ho_ten'], 'UTF-8'), mb_strtolower($b['ho_ten'], 'UTF-8'));
+        return $cmp;
+    });
+
+    $totalPages = ceil($total / $limit);
+    $allRows    = array_slice($allRows, $offset, $limit);
+
+    $listResult = new class($allRows) {
+        private $rows;
+        private $pos = 0;
+        public function __construct($rows) { $this->rows = $rows; }
+        public function fetch_assoc() { return $this->rows[$this->pos++] ?? null; }
+        public function data_seek($p) { $this->pos = $p; }
+    };
+
 } else {
-    $r = $conn->query("SELECT COUNT(*) FROM hoc_sinh");
-    $total = $r->fetch_row()[0];
-    $list = $conn->prepare("SELECT * FROM hoc_sinh ORDER BY ngay_dang_ky DESC LIMIT ? OFFSET ?");
-    $list->bind_param("ii", $limit, $offset);
+    $orderSQL = match($sortBy) {
+        'lop'   => "lop ASC, ho_ten ASC",
+        default => "$sortBy ASC",
+    };
+
+    if ($search !== '') {
+        $like = "%$search%";
+        $r = $conn->prepare("SELECT COUNT(*) FROM hoc_sinh WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? OR lop LIKE ?");
+        $r->bind_param("sss", $like, $like, $like); $r->execute(); $r->bind_result($total); $r->fetch(); $r->close();
+        $list = $conn->prepare("SELECT * FROM hoc_sinh WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? OR lop LIKE ? ORDER BY $orderSQL LIMIT ? OFFSET ?");
+        $list->bind_param("sssii", $like, $like, $like, $limit, $offset);
+    } else {
+        $r = $conn->query("SELECT COUNT(*) FROM hoc_sinh");
+        $total = $r->fetch_row()[0];
+        $list = $conn->prepare("SELECT * FROM hoc_sinh ORDER BY $orderSQL LIMIT ? OFFSET ?");
+        $list->bind_param("ii", $limit, $offset);
+    }
+    $list->execute();
+    $listResult = $list->get_result();
+    $totalPages = ceil($total / $limit);
 }
-$list->execute();
-$listResult = $list->get_result();
-$totalPages = ceil($total / $limit);
 
 $tohops = [];
 $r = $conn->query("SELECT ten_to_hop FROM to_hop ORDER BY id");
@@ -139,6 +189,8 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
     .search-bar { display:flex; gap:10px; align-items:center; background:#fff; border-radius:10px; padding:14px 18px; margin-bottom:15px; box-shadow:0 2px 8px rgba(0,0,0,0.07); flex-wrap:wrap; }
     .search-bar input { flex:1; min-width:200px; padding:9px 14px; border:1px solid #ccc; border-radius:8px; font-size:14px; }
     .search-bar input:focus { border-color:#004080; outline:none; }
+    .search-bar select { padding:9px 12px; border:1px solid #ccc; border-radius:8px; font-size:14px; color:#333; }
+    .search-bar select:focus { border-color:#004080; outline:none; }
     .btn-search { display:inline-flex; align-items:center; gap:6px; padding:9px 20px; background:#004080; color:#fff; border:none; border-radius:8px; font-size:14px; cursor:pointer; }
     .btn-search:hover { background:#003060; }
     .btn-reset  { display:inline-flex; align-items:center; gap:6px; padding:9px 14px; background:#e0e0e0; color:#555; border:none; border-radius:8px; font-size:14px; cursor:pointer; text-decoration:none; }
@@ -146,6 +198,8 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 
     .result-box { display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:8px; margin-bottom:15px; font-size:14px; }
     .result-success { background:#d4edda; color:#155724; border-left:4px solid #28a745; }
+
+    .search-info { font-size:13px; color:#888; margin-bottom:10px; padding:8px 12px; background:#f8f9ff; border-radius:8px; border-left:3px solid #004080; }
 
     .table-wrapper { background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.07); overflow-x:auto; }
     table { width:100%; border-collapse:collapse; min-width:750px; }
@@ -157,9 +211,7 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
     .btn-edit-row { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; background:transparent; color:#007bff; border:1px solid #007bff; border-radius:5px; font-size:11px; cursor:pointer; margin-right:3px; transition:all 0.2s; }
     .btn-edit-row:hover { background:#007bff; color:#fff; }
     .btn-del-row  { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; background:transparent; color:#dc3545; border:1px solid #dc3545; border-radius:5px; font-size:11px; cursor:pointer; transition:all 0.2s; text-decoration:none; }
-    .btn-del-row:hover  { background:#dc3545; color:#fff; text-decoration:none; }
-
-    .search-info { font-size:13px; color:#888; margin-bottom:10px; }
+    .btn-del-row:hover { background:#dc3545; color:#fff; text-decoration:none; }
 
     .pagination { display:flex; justify-content:center; gap:6px; padding:14px 0; flex-wrap:wrap; }
     .pagination a, .pagination span { padding:6px 12px; border-radius:6px; font-size:13px; text-decoration:none; border:1px solid #ddd; color:#004080; transition:all 0.2s; }
@@ -283,6 +335,7 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
         <canvas id="ngayChart"></canvas>
       </div>
     </div>
+  </div>
 
   <?php if (!empty($allTH)): ?>
   <div class="stat-section">
@@ -323,18 +376,39 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
     <input type="text" name="search"
            placeholder="Tìm theo họ tên, số báo danh hoặc lớp..."
            value="<?= htmlspecialchars($search) ?>">
+
+    <select name="sort_by">
+      <option value="lop"          <?= $sortBy === 'lop'          ? 'selected' : '' ?>>Theo lớp</option>
+      <option value="ho_ten"       <?= $sortBy === 'ho_ten'       ? 'selected' : '' ?>>Theo tên A→Z</option>
+      <option value="so_bao_danh"  <?= $sortBy === 'so_bao_danh'  ? 'selected' : '' ?>>Theo số báo danh</option>
+    </select>
+
+
     <button type="submit" class="btn-search">
       <i class="ti ti-search"></i> Tìm kiếm
     </button>
-    <?php if ($search !== ''): ?>
+
+    <?php if ($search !== '' || $sortBy !== 'lop'): ?>
       <a href="dashboard.php" class="btn-reset">
-        <i class="ti ti-x"></i> Xóa bộ lọc
+        <i class="ti ti-x"></i> Đặt lại
       </a>
     <?php endif; ?>
   </form>
 
-  <?php if ($search !== ''): ?>
-    <div class="search-info">Tìm thấy <strong><?= $total ?></strong> kết quả cho "<strong><?= htmlspecialchars($search) ?></strong>"</div>
+    <?php if ($search !== '' || $sortBy !== 'lop'): ?>
+    <div class="search-info">
+      <?php if ($search !== ''): ?>
+        Tìm thấy <strong><?= $total ?></strong> kết quả cho "<strong><?= htmlspecialchars($search) ?></strong>" —
+      <?php endif; ?>
+      Sắp xếp theo: <strong>
+        <?= match($sortBy) {
+          'lop'         => 'Lớp',
+          'ho_ten'      => 'Tên',
+          'so_bao_danh' => 'Số báo danh',
+          default       => 'Ngày đăng ký'
+        } ?>
+      </strong>
+    </div>
   <?php endif; ?>
 
   <h2>Danh sách học sinh đã đăng ký</h2>
@@ -426,7 +500,12 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
   </div>
 
   <?php if ($totalPages > 1):
-    $s = $search ? '&search='.urlencode($search) : ''; ?>
+    $s = http_build_query(array_filter([
+        'search'  => $search,
+        'sort_by' => $sortBy !== 'lop' ? $sortBy : '',
+    ]));
+    $s = $s ? '&'.$s : '';
+  ?>
     <div class="pagination">
       <?php if ($page > 1): ?>
         <a href="?page=1<?= $s ?>">«</a>
@@ -496,14 +575,13 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 
 <script>
 <?php
-$labelsJS = json_encode(array_values($allTH));
-$shortLabels = array_map(fn($th, $i) => 'TH'.($i+1), $allTH, array_keys($allTH));
-$shortLabelsJS = json_encode(array_values($shortLabels));
-$nv1JS = json_encode(array_values(array_map(fn($th) => $statsNV1[$th] ?? 0, $allTH)));
-$nv2JS = json_encode(array_values(array_map(fn($th) => $statsNV2[$th] ?? 0, $allTH)));
+$labelsJS    = json_encode(array_values($allTH));
+$shortLabels = array_values(array_map(fn($th, $i) => 'TH'.($i+1), $allTH, array_keys($allTH)));
+$nv1JS       = json_encode(array_values(array_map(fn($th) => $statsNV1[$th] ?? 0, $allTH)));
+$nv2JS       = json_encode(array_values(array_map(fn($th) => $statsNV2[$th] ?? 0, $allTH)));
 ?>
 const labels      = <?= $labelsJS ?>;
-const shortLabels = <?= $shortLabelsJS ?>;
+const shortLabels = <?= json_encode($shortLabels) ?>;
 const nv1Data     = <?= $nv1JS ?>;
 const nv2Data     = <?= $nv2JS ?>;
 const ngayLabels  = <?= json_encode(array_values($ngayLabels)) ?>;
