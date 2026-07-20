@@ -35,6 +35,10 @@ while ($r = $res->fetch_assoc()) {
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Đăng ký nguyện vọng lớp 10 – <?= $ten_truong ?></title>
   <link rel="icon" type="image/x-icon" href="<?= $favicon_path ?>">
   <link rel="stylesheet" href="style.css?v=11">
@@ -414,5 +418,25 @@ while ($r = $res->fetch_assoc()) {
   })();
   </script>
 
+    <script>
+      window.addEventListener('pageshow', function(e) {
+        const form = document.getElementById('form-dangky');
+        if (form) form.reset();
+
+        const loader = document.getElementById('page-loader');
+        if (loader) {
+          loader.classList.add('hidden');
+          loader.style.cssText = 'display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;';
+        }
+
+        const btn = document.querySelector('button[type="submit"]');
+        if (btn) {
+          btn.disabled         = false;
+          btn.innerHTML        = 'Gửi đăng ký';
+          btn.style.background = '';
+          btn.style.cursor     = '';
+        }
+      });
+    </script>
 </body>
 </html>

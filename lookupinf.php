@@ -12,6 +12,10 @@ $favicon_path = "images/favicon.png";
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
   <title>Tra cứu đăng ký – <?= $ten_truong ?></title>
   <link rel="icon" href="<?= $favicon_path ?>">
   <link rel="stylesheet" href="style.css?v=11">
@@ -422,6 +426,16 @@ function escHtml(str) {
 <style>
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>
-
+<script>
+window.addEventListener('pageshow', function() {
+  const loader = document.getElementById('page-loader');
+  if (loader) {
+    loader.classList.add('hidden');
+    loader.style.display    = 'none';
+    loader.style.opacity    = '0';
+    loader.style.visibility = 'hidden';
+  }
+});
+</script>
 </body>
 </html>

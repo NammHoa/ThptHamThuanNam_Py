@@ -27,6 +27,9 @@ $favicon_path = "images/favicon.png";
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Đăng ký thành công – <?= $ten_truong ?></title>
   <link rel="icon" href="<?= $favicon_path ?>">
   <link rel="stylesheet" href="style.css?v=11">
@@ -210,7 +213,7 @@ $favicon_path = "images/favicon.png";
         </div>
 
         <div class="sc-actions">
-          <a href="index.php" class="sc-btn-home">
+          <a href="javascript:void(0)" onclick="window.location.replace('index.php')" class="sc-btn-home">
             <i class="ti ti-arrow-left"></i> Quay về trang chủ
           </a>
         </div>
@@ -298,6 +301,16 @@ $favicon_path = "images/favicon.png";
   });
 })();
 </script>
+<script>
+history.replaceState(null, '', window.location.href);
 
+window.addEventListener('pageshow', function() {
+  const loader = document.getElementById('page-loader');
+  if (loader) {
+    loader.classList.add('hidden');
+    loader.style.cssText = 'display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important;';
+  }
+});
+</script>
 </body>
 </html>
