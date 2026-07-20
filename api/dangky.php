@@ -2,62 +2,66 @@
 session_start();
 require '../config.php';
 
-// 1. Kết nối cơ sở dữ liệu
+// 1. Kết nối DB
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 if ($conn->connect_error) {
     http_response_code(500);
-    die("❌ Lỗi kết nối CSDL: " . $conn->connect_error);
+    die("❌ Lỗi kết nối CSDL.");
 }
 $conn->set_charset('utf8mb4');
 
-// 2. Đọc deadline từ DB (không hardcode)
+// 2. Kiểm tra deadline
 $res = $conn->query("SELECT gia_tri FROM thietlap WHERE ten='han_dang_ky' LIMIT 1");
-$row = $res->fetch_assoc();
-
-if (!$row || empty($row['gia_tri'])) {
-    // Chưa cấu hình deadline → không cho đăng ký
-    $_SESSION['error'] = "⚠️ Hệ thống chưa mở đăng ký. Vui lòng thử lại sau.";
-    header("Location: ../index.php");
-    exit;
+if ($row = $res->fetch_assoc()) {
+    $deadline = new DateTime($row['gia_tri']);
+    if (new DateTime() > $deadline) {
+        http_response_code(403);
+        die("❌ Đã hết hạn đăng ký từ " . $deadline->format('d/m/Y H:i') . ".");
+    }
 }
 
-$deadline = new DateTime($row['gia_tri']);
-$now      = new DateTime();
-
-if ($now > $deadline) {
-    // Đã hết hạn
-    $_SESSION['error'] = "❌ Đã hết hạn đăng ký từ " . $deadline->format('d/m/Y H:i') . ".";
-    header("Location: ../index.php");
-    exit;
-}
-
-// 3. Lấy và lọc dữ liệu từ form
-$ho_ten        = trim($_POST['ho_ten']      ?? '');
-$lop           = trim(filter_input(INPUT_POST, 'lop',           FILTER_SANITIZE_FULL_SPECIAL_CHARS));
-$so_bao_danh   = trim($_POST['so_bao_danh'] ?? '');
-$so_dien_thoai = trim(filter_input(INPUT_POST, 'so_dien_thoai', FILTER_SANITIZE_FULL_SPECIAL_CHARS));
-$email         = trim(filter_input(INPUT_POST, 'email',         FILTER_SANITIZE_EMAIL));
+// 3. Lấy dữ liệu từ form
+$ho_ten        = trim($_POST['ho_ten']        ?? '');
+$ngay_sinh     = trim($_POST['ngay_sinh']     ?? '');
+$lop           = trim($_POST['lop']           ?? '');
+$so_dien_thoai = trim($_POST['so_dien_thoai'] ?? '');
+$email         = trim($_POST['email']         ?? '');
 $nv1           = filter_input(INPUT_POST, 'nv1', FILTER_VALIDATE_INT);
 $nv2           = filter_input(INPUT_POST, 'nv2', FILTER_VALIDATE_INT);
 
-// Decode entity nếu có
-$ho_ten = html_entity_decode($ho_ten, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
-// 4. Kiểm tra bắt buộc
-if (!$ho_ten || !$lop || !$so_bao_danh || !$so_dien_thoai || !$nv1 || !$nv2) {
-    $_SESSION['error'] = "❌ Vui lòng nhập đầy đủ thông tin.";
-    header("Location: ../index.php");
-    exit;
+// 4. Validate bắt buộc
+if (!$ho_ten || !$ngay_sinh || !$lop || !$so_dien_thoai || !$nv1 || !$nv2) {
+    http_response_code(400);
+    die("❌ Vui lòng nhập đầy đủ thông tin.");
 }
 
-// 5. NV1 khác NV2
+// 5. Validate ngày sinh
+$dt = DateTime::createFromFormat('Y-m-d', $ngay_sinh);
+if (!$dt || $dt >= new DateTime()) {
+    http_response_code(400);
+    die("❌ Ngày sinh không hợp lệ.");
+}
+$ngay_sinh_display = $dt->format('d/m/Y');
+
+// 6. Validate SĐT
+if (!preg_match('/^(03|05|07|08|09)\d{8}$/', $so_dien_thoai)) {
+    http_response_code(400);
+    die("❌ Số điện thoại không hợp lệ. Phải là 10 số bắt đầu 03x, 05x, 07x, 08x hoặc 09x.");
+}
+
+// 7. Validate email
+if (!preg_match('/^[^\s@]+@gmail\.com$/', $email)) {
+    http_response_code(400);
+    die("❌ Email phải có đuôi @gmail.com.");
+}
+
+// 8. NV1 khác NV2
 if ($nv1 === $nv2) {
-    $_SESSION['error'] = "❌ Nguyện vọng 1 và 2 không được trùng nhau.";
-    header("Location: ../index.php");
-    exit;
+    http_response_code(400);
+    die("❌ Nguyện vọng 1 và 2 không được trùng nhau.");
 }
 
-// 6. Kiểm tra NV1 & NV2 hợp lệ trong bảng to_hop
+// 9. Kiểm tra NV hợp lệ
 $stmt = $conn->prepare("SELECT COUNT(*) FROM to_hop WHERE id IN (?, ?)");
 $stmt->bind_param("ii", $nv1, $nv2);
 $stmt->execute();
@@ -65,57 +69,58 @@ $stmt->bind_result($cnt);
 $stmt->fetch();
 $stmt->close();
 if ($cnt < 2) {
-    $_SESSION['error'] = "❌ Nguyện vọng không hợp lệ.";
-    header("Location: ../index.php");
-    exit;
+    http_response_code(400);
+    die("❌ Nguyện vọng không hợp lệ.");
 }
 
-// 7. Ngăn trùng SBD
-$stmt = $conn->prepare("SELECT id FROM hoc_sinh WHERE so_bao_danh = ?");
-$stmt->bind_param("s", $so_bao_danh);
+// 10. Kiểm tra đã đăng ký chưa
+$stmt = $conn->prepare("SELECT id FROM hoc_sinh WHERE ho_ten = ? AND ngay_sinh = ?");
+$stmt->bind_param("ss", $ho_ten, $ngay_sinh_display);
 $stmt->execute();
 $stmt->store_result();
 if ($stmt->num_rows > 0) {
-    $_SESSION['error'] = "⚠️ Số báo danh này đã đăng ký rồi.";
-    header("Location: ../index.php");
-    exit;
+    http_response_code(409);
+    die("⚠️ Học sinh này đã đăng ký rồi.");
 }
 $stmt->close();
 
-// 8. Xác thực SBD + Họ tên với danh sách trúng tuyển
-$stmt = $conn->prepare("SELECT id FROM danh_sach_trung_tuyen WHERE so_bao_danh = ? AND ho_ten = ?");
-$stmt->bind_param("ss", $so_bao_danh, $ho_ten);
+// 11. Xác thực họ tên + ngày sinh với danh sách trúng tuyển
+$stmt = $conn->prepare("SELECT id FROM danh_sach_trung_tuyen WHERE ho_ten = ? AND ngay_sinh = ?");
+$stmt->bind_param("ss", $ho_ten, $ngay_sinh_display);
 $stmt->execute();
 $stmt->store_result();
 if ($stmt->num_rows === 0) {
-    $_SESSION['error'] = "❌ Thông tin SBD/Họ tên không khớp danh sách trúng tuyển.";
-    header("Location: ../index.php");
-    exit;
+    http_response_code(403);
+    die("❌ Họ tên hoặc ngày sinh không khớp danh sách trúng tuyển. Vui lòng kiểm tra lại.");
 }
 $stmt->close();
 
-// 9. Lấy label nguyện vọng từ to_hop
+// 12. Lấy label tổ hợp
 function getToHopLabel($conn, $id) {
-    $r = $conn->query("SELECT ten_to_hop FROM to_hop WHERE id = " . intval($id))->fetch_row();
-    return $r[0] ?? '';
+    $stmt = $conn->prepare("SELECT ten_to_hop FROM to_hop WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->bind_result($label);
+    $stmt->fetch();
+    $stmt->close();
+    return $label ?? '';
 }
 $label1 = getToHopLabel($conn, $nv1);
 $label2 = getToHopLabel($conn, $nv2);
 
-// 10. Lưu vào bảng hoc_sinh
-$stmt = $conn->prepare(
-    "INSERT INTO hoc_sinh
-    (ho_ten, lop, so_bao_danh, so_dien_thoai, email, nguyen_vong_1, nguyen_vong_2)
-    VALUES (?, ?, ?, ?, ?, ?, ?)"
-);
-$stmt->bind_param("sssssss", $ho_ten, $lop, $so_bao_danh, $so_dien_thoai, $email, $label1, $label2);
+// 13. Lưu vào DB
+$stmt = $conn->prepare("
+    INSERT INTO hoc_sinh (ho_ten, ngay_sinh, lop, so_dien_thoai, email, nguyen_vong_1, nguyen_vong_2)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+");
+$stmt->bind_param("sssssss", $ho_ten, $ngay_sinh_display, $lop, $so_dien_thoai, $email, $label1, $label2);
 if (!$stmt->execute()) {
-    $_SESSION['error'] = "❌ Lỗi khi lưu dữ liệu: " . $stmt->error;
-    header("Location: ../index.php");
-    exit;
+    http_response_code(500);
+    die("❌ Lỗi khi lưu dữ liệu: " . $stmt->error);
 }
+$stmt->close();
 
-// 11. Gửi email xác nhận nếu có
+// 14. Gửi email xác nhận
 if ($email && filter_var($email, FILTER_VALIDATE_EMAIL)) {
     require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -170,8 +175,8 @@ $mail->Body    = "
                 <td style='padding:10px 14px;font-size:14px;color:#333;'>{$lop}</td>
               </tr>
               <tr style='background:#f0f4f8;'>
-                <td style='padding:10px 14px;font-size:13px;color:#888;font-weight:bold;'>Số báo danh</td>
-                <td style='padding:10px 14px;font-size:14px;color:#333;font-weight:bold;'>{$so_bao_danh}</td>
+                <td style='padding:10px 14px;font-size:13px;color:#888;font-weight:bold;'>Ngày sinh</td>
+                <td style='padding:10px 14px;font-size:14px;color:#333;'>{$ngay_sinh_display}</td>
               </tr>
               <tr style='background:#fff;'>
                 <td style='padding:10px 14px;font-size:13px;color:#888;font-weight:bold;'>Nguyện vọng 1</td>
@@ -207,14 +212,15 @@ $mail->Body    = "
     }
 }
 
-// 12. Thông báo thành công và redirect
+// 15. Lưu session và redirect
 $_SESSION['dang_ky_thanh_cong'] = [
-    'ho_ten' => $ho_ten,
-    'lop'    => $lop,
-    'sbd'    => $so_bao_danh,
-    'nv1'    => $label1,
-    'nv2'    => $label2,
+    'ho_ten'        => $ho_ten,
+    'ngay_sinh'     => $ngay_sinh_display,
+    'lop'           => $lop,
+    'so_dien_thoai' => $so_dien_thoai,
+    'email'         => $email,
+    'nv1'           => $label1,
+    'nv2'           => $label2,
 ];
 header("Location: ../success.php");
 exit;
-?>

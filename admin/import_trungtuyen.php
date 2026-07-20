@@ -40,7 +40,6 @@ if (isset($_GET['clear'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit') {
     $id       = intval($_POST['edit_id']);
     $ho_ten   = trim($_POST['edit_ho_ten']);
-    $sbd      = trim($_POST['edit_sbd']);
     $ngay_raw = trim($_POST['edit_ngay_sinh']);
     if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $ngay_raw)) {
         $parts = explode('-', $ngay_raw);
@@ -48,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     } else {
         $ngay_sinh = $ngay_raw;
     }
-    $stmt = $conn->prepare("UPDATE danh_sach_trung_tuyen SET ho_ten=?, so_bao_danh=?, ngay_sinh=? WHERE id=?");
-    $stmt->bind_param("sssi", $ho_ten, $sbd, $ngay_sinh, $id);
+    $stmt = $conn->prepare("UPDATE danh_sach_trung_tuyen SET ho_ten=?, ngay_sinh=? WHERE id=?");
+    $stmt->bind_param("ssi", $ho_ten, $ngay_sinh, $id);
     $stmt->execute();
     $_SESSION['import_msg'] = 'edited';
     session_write_close();
@@ -70,12 +69,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file_excel'])) {
     $sheetData   = $spreadsheet->getActiveSheet()->toArray();
     $count = 0;
     for ($i = 3; $i < count($sheetData); $i++) {
-        $sbd       = trim($sheetData[$i][1] ?? '');
-        $name      = trim($sheetData[$i][2] ?? '');
-        $ngay_sinh = trim($sheetData[$i][3] ?? '');
-        if ($sbd === '' || $name === '') continue;
-        $stmt = $conn->prepare("INSERT IGNORE INTO danh_sach_trung_tuyen (so_bao_danh, ho_ten, ngay_sinh) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $sbd, $name, $ngay_sinh);
+        $name      = trim($sheetData[$i][1] ?? '');
+        $ngay_sinh = trim($sheetData[$i][2] ?? '');
+
+        if ($name === '' || $ngay_sinh === '') continue;
+
+        $stmt = $conn->prepare("INSERT IGNORE INTO danh_sach_trung_tuyen (ho_ten, ngay_sinh) VALUES (?, ?)");
+        $stmt->bind_param("ss", $name, $ngay_sinh);
         if ($stmt->execute()) $count++;
         $stmt->close();
     }
@@ -90,9 +90,9 @@ $offset = ($page - 1) * $limit;
 
 if ($search !== '') {
     $like = "%$search%";
-    $r = $conn->prepare("SELECT COUNT(*) FROM danh_sach_trung_tuyen WHERE ho_ten LIKE ? OR so_bao_danh LIKE ?");
+    $r = $conn->prepare("SELECT COUNT(*) FROM danh_sach_trung_tuyen WHERE ho_ten LIKE ? OR ngay_sinh LIKE ?");
     $r->bind_param("ss", $like, $like); $r->execute(); $r->bind_result($total); $r->fetch(); $r->close();
-    $list = $conn->prepare("SELECT * FROM danh_sach_trung_tuyen WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? ORDER BY id ASC LIMIT ? OFFSET ?");
+    $list = $conn->prepare("SELECT * FROM danh_sach_trung_tuyen WHERE ho_ten LIKE ? OR ngay_sinh LIKE ? ORDER BY id ASC LIMIT ? OFFSET ?");
     $list->bind_param("ssii", $like, $like, $limit, $offset);
 } else {
     $r = $conn->query("SELECT COUNT(*) FROM danh_sach_trung_tuyen");
@@ -230,7 +230,7 @@ $totalPages = ceil($total / $limit);
 
   <div class="upload-section">
     <h3><i class="ti ti-file-upload"></i> Upload file Excel (.xlsx)</h3>
-    <p>Cột B = Số báo danh | Cột C = Họ và tên | Cột D = Ngày sinh (hàng 1+2 là tiêu đề, dữ liệu từ hàng 3)</p>
+    <p>Cột C = Họ và tên | Cột D = Ngày sinh (hàng 1+2 là tiêu đề, dữ liệu từ hàng 3)</p>
     <form method="POST" enctype="multipart/form-data">
       <div class="upload-area">
         <input type="file" name="file_excel" accept=".xlsx" required>
@@ -245,7 +245,7 @@ $totalPages = ceil($total / $limit);
 
     <form method="GET" class="search-bar">
       <input type="text" name="search"
-             placeholder="Tìm theo tên hoặc số báo danh..."
+             placeholder="Tìm theo tên hoặc ngày sinh..."
              value="<?= htmlspecialchars($search) ?>">
       <button type="submit" class="btn-search">
         <i class="ti ti-search"></i> Tìm kiếm
@@ -271,7 +271,6 @@ $totalPages = ceil($total / $limit);
           <tr>
             <th style="width:55px; text-align:center;">STT</th>
             <th>Họ và tên</th>
-            <th style="width:120px;">Số báo danh</th>
             <th style="width:110px;">Ngày sinh</th>
             <th style="width:120px; text-align:center;">Thao tác</th>
           </tr>
@@ -281,11 +280,10 @@ $totalPages = ceil($total / $limit);
             <tr>
               <td style="text-align:center;"><?= $stt++ ?></td>
               <td><?= htmlspecialchars($row['ho_ten']) ?></td>
-              <td><?= htmlspecialchars($row['so_bao_danh']) ?></td>
               <td><?= htmlspecialchars($row['ngay_sinh']) ?></td>
               <td style="text-align:center;">
                 <button class="btn-edit-row"
-                  onclick="openEdit(<?= $row['id'] ?>,'<?= addslashes(htmlspecialchars($row['ho_ten'])) ?>','<?= addslashes($row['so_bao_danh']) ?>','<?= addslashes($row['ngay_sinh']) ?>')">
+                  onclick="openEdit(<?= $row['id'] ?>,'<?= addslashes($row['ho_ten']) ?>','<?= addslashes($row['ngay_sinh']) ?>')">
                   <i class="ti ti-edit"></i>
                 </button>
                 <a href="?delete_id=<?= $row['id'] ?><?= $search ? '&search='.urlencode($search) : '' ?>"
@@ -379,8 +377,6 @@ $totalPages = ceil($total / $limit);
       <input type="hidden" name="edit_id" id="edit_id">
       <label>Họ và tên:</label>
       <input type="text" name="edit_ho_ten" id="edit_ho_ten" required>
-      <label>Số báo danh:</label>
-      <input type="text" name="edit_sbd" id="edit_sbd" required>
       <label>Ngày sinh:</label>
       <input type="date" name="edit_ngay_sinh" id="edit_ngay_sinh">
       <div class="modal-footer">
@@ -396,17 +392,18 @@ $totalPages = ceil($total / $limit);
 </div>
 
 <script>
-function openEdit(id, ten, sbd, ngay) {
-  document.getElementById('edit_id').value = id;
+function openEdit(id, ten, ngay) {
+  document.getElementById('edit_id').value     = id;
   document.getElementById('edit_ho_ten').value = ten;
-  document.getElementById('edit_sbd').value = sbd;
   let dateVal = '';
-  if (ngay && ngay.includes('/')) {
-    const parts = ngay.split('/');
-    if (parts.length === 3) dateVal = parts[2] + '-' + parts[1] + '-' + parts[0];
-  } else {
-    dateVal = ngay;
-  }
+    if (ngay && ngay.includes('/')) {
+      const parts = ngay.split('/');
+      if (parts.length === 3) {
+        dateVal = parts[2] + '-' + parts[1].padStart(2,'0') + '-' + parts[0].padStart(2,'0');
+      }
+    } else {
+      dateVal = ngay;
+    }
   document.getElementById('edit_ngay_sinh').value = dateVal;
   document.getElementById('editModal').classList.add('active');
   document.getElementById('edit_ho_ten').focus();

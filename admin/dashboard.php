@@ -29,13 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit'
     $id    = intval($_POST['edit_id']);
     $ten   = trim($_POST['edit_ho_ten']);
     $lop   = trim($_POST['edit_lop']);
-    $sbd   = trim($_POST['edit_sbd']);
     $sdt   = trim($_POST['edit_sdt']);
     $email = trim($_POST['edit_email']);
     $nv1   = trim($_POST['edit_nv1']);
     $nv2   = trim($_POST['edit_nv2']);
-    $stmt = $conn->prepare("UPDATE hoc_sinh SET ho_ten=?, lop=?, so_bao_danh=?, so_dien_thoai=?, email=?, nguyen_vong_1=?, nguyen_vong_2=? WHERE id=?");
-    $stmt->bind_param("sssssssi", $ten, $lop, $sbd, $sdt, $email, $nv1, $nv2, $id);
+    $stmt = $conn->prepare("UPDATE hoc_sinh SET ho_ten=?, lop=?, so_dien_thoai=?, email=?, nguyen_vong_1=?, nguyen_vong_2=? WHERE id=?");
+    $stmt->bind_param("sssssssi", $ten, $lop, $sdt, $email, $nv1, $nv2, $id);
     $stmt->execute();
     $_SESSION['dash_msg'] = 'edited';
     session_write_close();
@@ -97,7 +96,7 @@ $orderSQL = match($sortBy) {
 if ($sortBy === 'ho_ten') {
     if ($search !== '') {
         $like = "%$search%";
-        $r = $conn->prepare("SELECT COUNT(*) FROM hoc_sinh WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? OR lop LIKE ?");
+        $r = $conn->prepare("SELECT COUNT(*) FROM hoc_sinh WHERE ho_ten LIKE ? OR lop LIKE ?");
         $r->bind_param("sss", $like, $like, $like); $r->execute(); $r->bind_result($total); $r->fetch(); $r->close();
         $stmt = $conn->prepare("SELECT * FROM hoc_sinh WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? OR lop LIKE ?");
         $stmt->bind_param("sss", $like, $like, $like);
@@ -138,7 +137,7 @@ if ($sortBy === 'ho_ten') {
         $like = "%$search%";
         $r = $conn->prepare("SELECT COUNT(*) FROM hoc_sinh WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? OR lop LIKE ?");
         $r->bind_param("sss", $like, $like, $like); $r->execute(); $r->bind_result($total); $r->fetch(); $r->close();
-        $list = $conn->prepare("SELECT * FROM hoc_sinh WHERE ho_ten LIKE ? OR so_bao_danh LIKE ? OR lop LIKE ? ORDER BY $orderSQL LIMIT ? OFFSET ?");
+        $list = $conn->prepare("SELECT * FROM hoc_sinh WHERE ho_ten LIKE ? OR lop LIKE ? ORDER BY $orderSQL LIMIT ? OFFSET ?");
         $list->bind_param("sssii", $like, $like, $like, $limit, $offset);
     } else {
         $r = $conn->query("SELECT COUNT(*) FROM hoc_sinh");
@@ -358,7 +357,7 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
 
   <form method="GET" class="search-bar">
     <input type="text" name="search"
-           placeholder="Tìm theo họ tên, số báo danh hoặc lớp..."
+           placeholder="Tìm theo họ tên, lớp."
            value="<?= htmlspecialchars($search) ?>">
 
     <select name="sort_by">
@@ -403,8 +402,8 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
         <tr>
           <th style="width:45px;">STT</th>
           <th>Họ tên</th>
+          <th style="width:90px;">Ngày sinh</th>
           <th style="width:55px;">Lớp</th>
-          <th style="width:90px;">Số báo danh</th>
           <th style="width:105px;">SĐT</th>
           <th>Email</th>
           <th>Nguyện vọng 1</th>
@@ -418,8 +417,8 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
           <tr>
             <td style="text-align:center;"><?= $stt++ ?></td>
             <td><?= htmlspecialchars($row['ho_ten']) ?></td>
+            <td style="font-size:12px;"><?= htmlspecialchars($row['ngay_sinh']) ?></td>
             <td><?= htmlspecialchars($row['lop']) ?></td>
-            <td><?= htmlspecialchars($row['so_bao_danh']) ?></td>
             <td><?= htmlspecialchars($row['so_dien_thoai']) ?></td>
             <td style="font-size:12px;"><?= htmlspecialchars($row['email']) ?></td>
             <td style="font-size:12px;"><?= htmlspecialchars($row['nguyen_vong_1']) ?></td>
@@ -430,7 +429,6 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
                 <?= $row['id'] ?>,
                 '<?= addslashes(htmlspecialchars($row['ho_ten'])) ?>',
                 '<?= addslashes($row['lop']) ?>',
-                '<?= addslashes($row['so_bao_danh']) ?>',
                 '<?= addslashes($row['so_dien_thoai']) ?>',
                 '<?= addslashes($row['email']) ?>',
                 '<?= addslashes(htmlspecialchars($row['nguyen_vong_1'])) ?>',
@@ -445,7 +443,7 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
           </tr>
         <?php endwhile; ?>
         <?php if ($total === 0): ?>
-          <tr><td colspan="10" style="text-align:center; color:#888; padding:20px;">Không tìm thấy kết quả.</td></tr>
+          <tr><td colspan="11" style="text-align:center; color:#888; padding:20px;">Không tìm thấy kết quả.</td></tr>
         <?php endif; ?>
       </tbody>
     </table>
@@ -459,7 +457,6 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
           <div class="card-name"><?= htmlspecialchars($row['ho_ten']) ?></div>
         </div>
         <div class="card-row"><span class="card-label">Lớp</span><span><?= htmlspecialchars($row['lop']) ?></span></div>
-        <div class="card-row"><span class="card-label">SBD</span><span><?= htmlspecialchars($row['so_bao_danh']) ?></span></div>
         <div class="card-row"><span class="card-label">SĐT</span><span><?= htmlspecialchars($row['so_dien_thoai']) ?></span></div>
         <div class="card-row"><span class="card-label">Ngày ĐK</span><span style="font-size:12px;"><?= $row['ngay_dang_ky'] ?></span></div>
         <div class="card-nv">
@@ -563,7 +560,6 @@ while ($row = $r->fetch_assoc()) $tohops[] = $row['ten_to_hop'];
         <div><label>Lớp:</label><input type="text" name="edit_lop" id="edit_lop"></div>
       </div>
       <div class="modal-row">
-        <div><label>Số báo danh:</label><input type="text" name="edit_sbd" id="edit_sbd" required></div>
         <div><label>Số điện thoại:</label><input type="text" name="edit_sdt" id="edit_sdt"></div>
       </div>
       <label>Email:</label>
@@ -700,11 +696,10 @@ function showEditError(msg) {
 
   return false;
 }
-function openEdit(id, ten, lop, sbd, sdt, email, nv1, nv2) {
+function openEdit(id, ten, lop, sdt, email, nv1, nv2) {
   document.getElementById('edit_id').value     = id;
   document.getElementById('edit_ho_ten').value = ten;
   document.getElementById('edit_lop').value    = lop;
-  document.getElementById('edit_sbd').value    = sbd;
   document.getElementById('edit_sdt').value    = sdt;
   document.getElementById('edit_email').value  = email;
   const s1 = document.getElementById('edit_nv1');

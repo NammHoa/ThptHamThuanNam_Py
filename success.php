@@ -12,8 +12,8 @@ $data = $_SESSION['dang_ky_thanh_cong'];
 unset($_SESSION['dang_ky_thanh_cong']);
 
 $ho_ten = $data['ho_ten'];
+$ngay_sinh = $data['ngay_sinh'];
 $lop    = $data['lop'];
-$sbd    = $data['sbd'];
 $nv1    = $data['nv1'];
 $nv2    = $data['nv2'];
 
@@ -188,8 +188,8 @@ $favicon_path = "images/favicon.png";
             <span class="sc-row-value"><?= htmlspecialchars($lop) ?></span>
           </div>
           <div class="sc-row">
-            <span class="sc-row-label">Số báo danh</span>
-            <span class="sc-row-value bold"><?= htmlspecialchars($sbd) ?></span>
+            <span class="sc-row-label">Ngày sinh</span>
+            <span class="sc-row-value"><?= htmlspecialchars($ngay_sinh) ?></span>
           </div>
           <div class="sc-row">
             <span class="sc-row-label">Nguyện vọng 1</span>

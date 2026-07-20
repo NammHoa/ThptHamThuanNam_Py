@@ -107,16 +107,17 @@ $favicon_path = "images/favicon.png";
     .tc-row:last-child { border-bottom: none; }
     .tc-row:nth-child(even) { background: #fafafa; }
     .tc-row-label {
-      font-size: 13px; color: #9ca3af;
+      font-size: 14px; color: #6b7280;
       width: 130px; flex-shrink: 0; padding-top: 1px;
+      font-weight: 500;
     }
     .tc-row-value {
-      font-size: 14px; color: #111827;
-      font-weight: 500; flex: 1; line-height: 1.5;
+      font-size: 15px; color: #0f172a;
+      font-weight: 600; flex: 1; line-height: 1.5;
     }
-    .tc-row-value.blue  { color: #1d5fa8; }
-    .tc-row-value.bold  { font-size: 15px; font-weight: 700; }
-    .tc-row-value.muted { color: #6b7280; font-weight: 400; font-size: 13px; }
+    .tc-row-value.blue { color: #1a56db; font-weight: 600; }
+    .tc-row-value.bold { font-size: 16px; font-weight: 700; }
+    .tc-row-value.muted { color: #4b5563; font-weight: 500; font-size: 14px; }
 
     .tc-badge-ok {
       display: inline-flex; align-items: center; gap: 5px;
@@ -201,7 +202,7 @@ $favicon_path = "images/favicon.png";
         </div>
         <div>
           <h2>Tra cứu đăng ký nguyện vọng</h2>
-          <p>Nhập số báo danh và họ tên để kiểm tra thông tin đăng ký của bạn.</p>
+          <p>Nhập họ tên và ngày sinh để kiểm tra thông tin đăng ký của bạn.</p>
         </div>
       </div>
 
@@ -209,12 +210,12 @@ $favicon_path = "images/favicon.png";
 
         <div class="tc-form">
           <div>
-            <label for="inp-sbd">Số báo danh <span style="color:red">*</span></label>
-            <input type="text" id="inp-sbd" placeholder="Ví dụ: 120001" maxlength="20">
+            <label for="inp-hoten">Họ và tên học sinh <span style="color:red">*</span></label>
+            <input type="text" id="inp-hoten">
           </div>
           <div>
-            <label for="inp-hoten">Họ và tên học sinh <span style="color:red">*</span></label>
-            <input type="text" id="inp-hoten" placeholder="Ví dụ: Nguyễn Văn A">
+            <label for="inp-ngaysinh">Ngày sinh <span style="color:red">*</span></label>
+            <input type="date" id="inp-ngaysinh">
           </div>
           <button class="tc-btn" id="btn-tracuu" onclick="tracuu()">
             <i class="ti ti-search"></i> Tra cứu
@@ -318,25 +319,29 @@ function showError(msg) {
 }
 
 function tracuu() {
-  const sbd   = document.getElementById('inp-sbd').value.trim();
-  const hoten = document.getElementById('inp-hoten').value.trim();
-  const btn   = document.getElementById('btn-tracuu');
-  const errEl = document.getElementById('tc-error');
-  const resEl = document.getElementById('tc-result');
+  const hoten    = document.getElementById('inp-hoten').value.trim();
+  const ngaysinh = document.getElementById('inp-ngaysinh').value.trim();
+  const btn      = document.getElementById('btn-tracuu');
+  const errEl    = document.getElementById('tc-error');
+  const resEl    = document.getElementById('tc-result');
 
   errEl.classList.remove('show');
   resEl.classList.remove('show');
 
-  if (!sbd)   { showError('Vui lòng nhập số báo danh.'); return; }
-  if (!hoten) { showError('Vui lòng nhập họ và tên.'); return; }
+  if (!hoten)    { showError('Vui lòng nhập họ và tên.'); return; }
+  if (!ngaysinh) { showError('Vui lòng nhập ngày sinh.'); return; }
 
   btn.disabled = true;
   btn.innerHTML = '<i class="ti ti-loader-2" style="font-size:18px;animation:spin .8s linear infinite;"></i> Đang tra cứu...';
 
+  // Chuyển yyyy-mm-dd → dd/mm/yyyy
+  const parts = ngaysinh.split('-');
+  const ngaySinhFmt = parts[2] + '/' + parts[1] + '/' + parts[0];
+
   fetch('api/lookupinf.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `sbd=${encodeURIComponent(sbd)}&ho_ten=${encodeURIComponent(hoten)}`
+    body: `ho_ten=${encodeURIComponent(hoten)}&ngay_sinh=${encodeURIComponent(ngaySinhFmt)}`
   })
   .then(r => r.json())
   .then(data => {
@@ -364,12 +369,12 @@ function tracuu() {
             <span class="tc-row-value">${escHtml(d.ho_ten)}</span>
           </div>
           <div class="tc-row">
-            <span class="tc-row-label">Lớp</span>
-            <span class="tc-row-value">${escHtml(d.lop)}</span>
+            <span class="tc-row-label">Ngày sinh</span>
+            <span class="tc-row-value">${escHtml(d.ngay_sinh)}</span>
           </div>
           <div class="tc-row">
-            <span class="tc-row-label">Số báo danh</span>
-            <span class="tc-row-value bold">${escHtml(d.so_bao_danh)}</span>
+            <span class="tc-row-label">Lớp</span>
+            <span class="tc-row-value">${escHtml(d.lop)}</span>
           </div>
           <div class="tc-row">
             <span class="tc-row-label">Nguyện vọng 1</span>
@@ -395,7 +400,7 @@ function tracuu() {
             <i class="ti ti-clipboard-x" style="font-size:44px;"></i>
           </div>
           <h3>Chưa tìm thấy thông tin đăng ký</h3>
-          <p>Số báo danh <strong>${escHtml(sbd)}</strong> chưa có trong danh sách đăng ký.<br>
+          <p>Không tìm thấy thông tin đăng ký với họ tên và ngày sinh đã nhập.<br>
           Vui lòng kiểm tra lại hoặc đăng ký nguyện vọng.</p>
         </div>`;
     }

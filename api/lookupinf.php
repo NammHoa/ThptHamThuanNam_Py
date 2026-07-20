@@ -11,11 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$sbd    = trim($_POST['sbd']    ?? '');
 $ho_ten = trim($_POST['ho_ten'] ?? '');
+$ngay_sinh = trim($_POST['ngay_sinh'] ?? '');
 
-// Validate đầu vào
-if (!$sbd || !$ho_ten) {
+if (!$ho_ten || !$ngay_sinh) {
     echo json_encode(['success' => false, 'message' => 'Vui lòng nhập đầy đủ thông tin.']);
     exit;
 }
@@ -29,15 +28,15 @@ if ($conn->connect_error) {
 $conn->set_charset('utf8mb4');
 
 // Bước 1: Kiểm tra SBD có trong danh sách trúng tuyển không
-$stmt = $conn->prepare("SELECT id FROM danh_sach_trung_tuyen WHERE so_bao_danh = ? AND ho_ten = ?");
-$stmt->bind_param("ss", $sbd, $ho_ten);
+$stmt = $conn->prepare("SELECT id FROM danh_sach_trung_tuyen WHERE ho_ten = ? AND ngay_sinh = ?");
+$stmt->bind_param("ss", $ho_ten, $ngay_sinh);
 $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows === 0) {
     echo json_encode([
         'success' => false,
-        'message' => 'Số báo danh hoặc họ tên không khớp danh sách trúng tuyển. Vui lòng kiểm tra lại.'
+        'message' => 'Họ tên hoặc ngày sinh không khớp danh sách trúng tuyển. Vui lòng kiểm tra lại.'
     ]);
     $stmt->close();
     $conn->close();
@@ -47,13 +46,13 @@ $stmt->close();
 
 // Bước 2: Tìm trong bảng hoc_sinh xem đã đăng ký chưa
 $stmt = $conn->prepare("
-    SELECT ho_ten, lop, so_bao_danh, so_dien_thoai,
+    SELECT ho_ten, ngay_sinh, lop,
            nguyen_vong_1, nguyen_vong_2, ngay_dang_ky
     FROM hoc_sinh
-    WHERE so_bao_danh = ?
+    WHERE ho_ten = ? AND ngay_sinh = ?
     LIMIT 1
 ");
-$stmt->bind_param("s", $sbd);
+$stmt->bind_param("ss", $ho_ten, $ngay_sinh);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -72,8 +71,8 @@ if ($result->num_rows === 0) {
         'registered' => true,
         'data'       => [
             'ho_ten'       => $row['ho_ten'],
+            'ngay_sinh'    => $row['ngay_sinh'],
             'lop'          => $row['lop'],
-            'so_bao_danh'  => $row['so_bao_danh'],
             'nguyen_vong_1'=> $row['nguyen_vong_1'],
             'nguyen_vong_2'=> $row['nguyen_vong_2'],
             'ngay_dang_ky' => $ngay,

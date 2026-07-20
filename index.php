@@ -3,9 +3,9 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
 session_start();
 require __DIR__ . '/autoload.php';
 
-$ten_truong = "Trường THPT Hàm Thuận Nam";
-$nam_hoc    = "2025–2026";
-$logo_path  = "images/logo-thpt-cent.jpg";
+$ten_truong   = "Trường THPT Hàm Thuận Nam";
+$nam_hoc      = "2025–2026";
+$logo_path    = "images/logo-thpt-cent.jpg";
 $favicon_path = "images/favicon.ico";
 
 $now = new DateTime();
@@ -57,8 +57,7 @@ while ($r = $res->fetch_assoc()) {
       background: rgba(255,255,255,0.06);
       top: -60px; right: -40px; pointer-events: none;
     }
-    .expired-icon  { display: block; margin-bottom: 14px; }
-    .expired-icon i { font-size: 52px; color: #fff; }
+    .expired-icon i { font-size: 52px; color: #fff; display: block; margin-bottom: 14px; }
     .expired-title { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px; }
     .expired-time  { font-size: 13px; color: rgba(255,255,255,0.75); }
     .expired-bottom { padding: 24px 28px; text-align: center; }
@@ -74,6 +73,38 @@ while ($r = $res->fetch_assoc()) {
     }
     .tc-link:hover { background: #004080; color: #fff; text-decoration: none; }
     .tc-link i { font-size: 18px; }
+
+    input[type="date"] {
+      width: 100%;
+      padding: 10px 14px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #333;
+      background: #fff;
+      cursor: pointer;
+      transition: border 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input[type="date"]:focus {
+      border-color: #004080;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0,64,128,0.1);
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.6;
+      filter: invert(20%) sepia(80%) saturate(400%) hue-rotate(190deg);
+    }
+    input[type="date"]::-webkit-datetime-edit {
+      color: #333;
+    }
+    input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+      padding: 0;
+    }
   </style>
 </head>
 <body>
@@ -157,11 +188,11 @@ while ($r = $res->fetch_assoc()) {
           <label>Họ và tên học sinh: <span style="color:red;">*</span></label>
           <input type="text" name="ho_ten">
 
+          <label>Ngày sinh: <span style="color:red;">*</span></label>
+          <input type="date" name="ngay_sinh">
+
           <label>Lớp 9 hiện tại: <span style="color:red;">*</span></label>
           <input type="text" name="lop">
-
-          <label>Số báo danh: <span style="color:red;">*</span></label>
-          <input type="text" name="so_bao_danh">
 
           <label>Số điện thoại phụ huynh: <span style="color:red;">*</span></label>
           <input type="text" name="so_dien_thoai" maxlength="10">
@@ -206,7 +237,6 @@ while ($r = $res->fetch_assoc()) {
   <footer>
     <div class="footer-accent"></div>
     <div class="footer-body">
-
       <div class="footer-brand">
         <img src="<?= $logo_path ?>" alt="Logo">
         <div class="footer-brand-text">
@@ -214,7 +244,6 @@ while ($r = $res->fetch_assoc()) {
           <p>Môi trường giáo dục xanh – sạch – đẹp – an toàn</p>
         </div>
       </div>
-
       <div class="footer-info">
         <div class="footer-info-item">
           <i class="ti ti-map-pin"></i>
@@ -233,20 +262,14 @@ while ($r = $res->fetch_assoc()) {
           <a href="http://thpthamthuannam.edu.vn" target="_blank">thpthamthuannam.edu.vn</a>
         </div>
       </div>
-
       <div class="footer-fb">
         <div class="fb-page"
           data-href="https://www.facebook.com/truongthpthamthuannam"
-          data-tabs="timeline"
-          data-width="260"
-          data-height="200"
-          data-small-header="true"
-          data-adapt-container-width="false"
-          data-hide-cover="false"
-          data-show-facepile="false">
+          data-tabs="timeline" data-width="260" data-height="200"
+          data-small-header="true" data-adapt-container-width="false"
+          data-hide-cover="false" data-show-facepile="false">
         </div>
       </div>
-
     </div>
     <div class="footer-bottom">
       <span>© <?= date('Y') ?> Trường THPT Hàm Thuận Nam. Thiết kế bởi <strong>Thầy Huỳnh Minh Châu</strong></span>
@@ -294,9 +317,8 @@ while ($r = $res->fetch_assoc()) {
 
     function validateForm() {
       const fields = [
-        { name: 'ho_ten',      label: 'Họ và tên học sinh' },
-        { name: 'lop',         label: 'Lớp 9 hiện tại' },
-        { name: 'so_bao_danh', label: 'Số báo danh' },
+        { name: 'ho_ten', label: 'Họ và tên học sinh' },
+        { name: 'lop',    label: 'Lớp 9 hiện tại' },
       ];
       const errorBox = document.getElementById('form-error');
 
@@ -308,6 +330,17 @@ while ($r = $res->fetch_assoc()) {
         }
       }
 
+      const ngaySinhEl  = document.querySelector('input[name="ngay_sinh"]');
+      const ngaySinhVal = ngaySinhEl ? ngaySinhEl.value : '';
+      if (!ngaySinhVal) {
+        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> Vui lòng nhập <strong>Ngày sinh</strong>.');
+        ngaySinhEl && ngaySinhEl.focus(); return false;
+      }
+      if (new Date(ngaySinhVal) >= new Date()) {
+        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Ngày sinh</strong> không hợp lệ.');
+        ngaySinhEl && ngaySinhEl.focus(); return false;
+      }
+
       const sdtEl  = document.querySelector('input[name="so_dien_thoai"]');
       const sdtVal = sdtEl ? sdtEl.value.trim() : '';
       if (!sdtVal) {
@@ -315,7 +348,7 @@ while ($r = $res->fetch_assoc()) {
         sdtEl && sdtEl.focus(); return false;
       }
       if (!/^(03|05|07|08|09)\d{8}$/.test(sdtVal)) {
-        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Số điện thoại</strong> không hợp lệ.');
+        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Số điện thoại</strong> không hợp lệ. Phải là 10 số, bắt đầu bằng 03x, 05x, 07x, 08x hoặc 09x.');
         sdtEl && sdtEl.focus(); return false;
       }
 
