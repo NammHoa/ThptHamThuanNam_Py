@@ -208,7 +208,7 @@ $favicon_path = "images/favicon.png";
           <i class="ti ti-alert-triangle"></i>
           <div>
             <strong>Lưu ý quan trọng</strong>
-            <span>Mỗi số báo danh chỉ được đăng ký một lần. Nếu cần thay đổi nguyện vọng, vui lòng liên hệ trực tiếp với nhà trường.</span>
+            <span>Mỗi học sinh chỉ được đăng ký một lần. Nếu cần thay đổi nguyện vọng, vui lòng liên hệ trực tiếp với nhà trường.</span>
           </div>
         </div>
 

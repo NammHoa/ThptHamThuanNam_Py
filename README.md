@@ -80,40 +80,6 @@
 - Composer
 - Apache/Nginx với mod_rewrite
 
-### Các bước cài đặt
-
-**1. Clone repository**
-```bash
-git clone https://github.com/NammHoa/ThptHamThuanNam_Py.git
-cd ThptHamThuanNam_Py
-```
-
-**2. Cài đặt dependencies**
-```bash
-composer install
-```
-
-**3. Tạo database**
-```sql
-mysql -u root -p < db/nguyenvong.sql
-```
-
-**4. Cấu hình kết nối**
-
-Mở file `config.php` và chỉnh sửa:
-```php
-```
-
-**5. Hash mật khẩu admin**
-
-Upload `hash_password_tool.php` lên server, truy cập để tạo mật khẩu mới, sau đó cập nhật vào DB:
-```sql
-UPDATE admin_users SET password = 'bcrypt_hash_here' WHERE username = 'admin';
-```
-> ⚠️ Xóa file `hash_password_tool.php` ngay sau khi dùng!
-
----
-
 ## 🔐 Bảo mật
 
 - Mật khẩu admin được hash bằng **BCrypt** (`password_hash`)
@@ -122,18 +88,6 @@ UPDATE admin_users SET password = 'bcrypt_hash_here' WHERE username = 'admin';
 - Session regenerate sau khi đăng nhập
 - Prepared statements chống **SQL Injection**
 - `htmlspecialchars()` chống **XSS**
-
----
-
-## 📊 Database Schema
-
-| Bảng | Mô tả |
-|---|---|
-| `hoc_sinh` | Danh sách học sinh đã đăng ký nguyện vọng |
-| `danh_sach_trung_tuyen` | Danh sách học sinh trúng tuyển (import từ Excel) |
-| `to_hop` | Danh sách tổ hợp môn |
-| `thietlap` | Cấu hình hệ thống (hạn đăng ký) |
-| `admin_users` | Tài khoản quản trị viên |
 
 ---
 
