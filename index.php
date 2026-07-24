@@ -352,7 +352,7 @@ while ($r = $res->fetch_assoc()) {
         sdtEl && sdtEl.focus(); return false;
       }
       if (!/^(03|05|07|08|09)\d{8}$/.test(sdtVal)) {
-        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Số điện thoại</strong> không hợp lệ. Phải là 10 số, bắt đầu bằng 03x, 05x, 07x, 08x hoặc 09x.');
+        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Số điện thoại</strong> không hợp lệ.');
         sdtEl && sdtEl.focus(); return false;
       }
 
@@ -363,7 +363,7 @@ while ($r = $res->fetch_assoc()) {
         emailEl && emailEl.focus(); return false;
       }
       if (!/^[^\s@]+@gmail\.com$/.test(emailVal)) {
-        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Email</strong> phải có đuôi @gmail.com. Ví dụ: ten@gmail.com');
+        showError(errorBox, '<i class="ti ti-alert-triangle" style="vertical-align:-2px;"></i> <strong>Email</strong> phải có đuôi @gmail.com.');
         emailEl && emailEl.focus(); return false;
       }
 
