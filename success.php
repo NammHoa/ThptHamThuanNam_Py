@@ -14,6 +14,8 @@ unset($_SESSION['dang_ky_thanh_cong']);
 $ho_ten = $data['ho_ten'];
 $ngay_sinh = $data['ngay_sinh'];
 $lop    = $data['lop'];
+$so_dien_thoai = $data['so_dien_thoai'] ?? '';
+$email         = $data['email'] ?? '';
 $nv1    = $data['nv1'];
 $nv2    = $data['nv2'];
 
@@ -204,12 +206,17 @@ $favicon_path = "images/favicon.png";
           </div>
         </div>
 
-        <div class="sc-note">
-          <i class="ti ti-alert-triangle"></i>
-          <div>
-            <strong>Lưu ý quan trọng</strong>
-            <span>Mỗi học sinh chỉ được đăng ký một lần. Nếu cần thay đổi nguyện vọng, vui lòng liên hệ trực tiếp với nhà trường.</span>
-          </div>
+        <div style="
+          display:flex; align-items:center; gap:10px;
+          background:#eff6ff; border:1px solid #bfdbfe;
+          border-left:3px solid #3b82f6;
+          border-radius:8px; padding:12px 14px;
+          margin-top:12px; flex-wrap:nowrap;
+        ">
+          <i class="ti ti-mail" style="font-size:18px;color:#3b82f6;flex-shrink:0;"></i>
+          <span style="font-size:13px;color:#1e40af;line-height:1.5;">
+            Email xác nhận sẽ được gửi đến <strong><?= htmlspecialchars($email) ?></strong> trong vòng 10 phút.
+          </span>
         </div>
 
         <div class="sc-actions">

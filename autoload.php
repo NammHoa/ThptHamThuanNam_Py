@@ -2,7 +2,7 @@
 // autoload.php
 
 // — 1. Tự include config chung để nạp hằng số DB_
-require __DIR__ . '/config.php';
+require_once __DIR__ . '/config.php';
 
 // — 2. Đăng ký PSR-4 autoloader cho namespace App\
 spl_autoload_register(function (string $class) {
