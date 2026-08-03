@@ -17,11 +17,23 @@ $resultType = '';
 // Xóa 1 học sinh
 if (isset($_GET['delete_id'])) {
     $id = intval($_GET['delete_id']);
-    $r  = $conn->prepare("SELECT ho_ten FROM hoc_sinh WHERE id = ?");
+
+    // Lấy cả ho_ten và email trước khi xóa
+    $r = $conn->prepare("SELECT ho_ten, email FROM hoc_sinh WHERE id = ?");
     $r->bind_param("i", $id); $r->execute();
     $hs = $r->get_result()->fetch_assoc(); $r->close();
+
+    // Xóa trong hoc_sinh
     $stmt = $conn->prepare("DELETE FROM hoc_sinh WHERE id = ?");
     $stmt->bind_param("i", $id); $stmt->execute(); $stmt->close();
+
+    // Xóa email chưa gửi trong mail_queue
+    if ($hs && !empty($hs['email'])) {
+        $stmt = $conn->prepare("DELETE FROM mail_queue WHERE email = ? AND sent = 0");
+        $stmt->bind_param("s", $hs['email']);
+        $stmt->execute(); $stmt->close();
+    }
+
     $_SESSION['dash_msg'] = 'deleted';
     session_write_close();
     header("Location: dashboard.php"); exit;
